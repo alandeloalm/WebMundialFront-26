@@ -1,0 +1,23 @@
+.input-shadcn {
+  @apply w-full h-12 bg-white border border-slate-200 rounded-xl pl-12 pr-4 text-sm outline-none transition-all;
+}
+
+.input-shadcn:focus {
+  @apply border-[#f35b33] ring-4 ring-orange-500/10;
+}
+
+.fade-up {
+  animation: fadeUp 0.6s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+}
+
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+input[type="date"]::-webkit-calendar-picker-indicator {
+  @apply opacity-40 cursor-pointer;
+}
+
+.font-display { font-family: 'Space Grotesk', sans-serif; }
+.font-body { font-family: 'Inter', sans-serif; }

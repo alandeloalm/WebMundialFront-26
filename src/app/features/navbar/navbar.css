@@ -1,0 +1,50 @@
+/* --- Limpieza y Efecto Cristal --- */
+.glass {
+  background-color: rgba(255, 255, 255, 0.7) !important;
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+  box-shadow: none !important; /* Elimina cualquier sombra negra residual */
+}
+
+/* --- Magia del Deslizamiento Desktop (View Transitions) --- */
+.active-pill {
+  /* Este nombre le dice al navegador que este elemento se mueve de A hacia B */
+  view-transition-name: nav-indicator;
+}
+
+/* --- Animaciones Móviles (Estándar 20.2+) --- */
+.nav-enter {
+  animation: slideIn 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+.nav-leave {
+  animation: slideOut 0.25s cubic-bezier(0.7, 0, 0.84, 0) forwards;
+}
+
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes slideOut {
+  from {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  to {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+}
+
+/* Hover sutil para links no activos */
+.nav-link:hover:not(.is-active) span {
+  color: var(--foreground) !important;
+}
