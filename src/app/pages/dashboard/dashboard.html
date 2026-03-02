@@ -1,1 +1,75 @@
-<p>dashboard works!</p>
+<div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8 animate-in fade-in duration-700">
+  
+  <div class="flex items-center justify-between mb-8">
+    <div>
+      <h1 class="text-3xl font-display font-bold text-foreground mb-2">Dashboard</h1>
+      <p class="text-muted-foreground font-body">Métricas generales de la experiencia Mundial 2026</p>
+    </div>
+    <div class="hidden sm:flex items-center gap-2 px-3 py-1.5 rounded-lg border border-border bg-card text-xs text-muted-foreground shadow-sm">
+      <div class="w-2 h-2 rounded-full bg-secondary animate-pulse"></div>
+      En vivo
+    </div>
+  </div>
+
+  <div class="grid sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
+    @for (stat of stats; track stat.label; let i = $index) {
+      <div class="rounded-xl border border-border bg-card p-5 shadow-card hover:shadow-elevated transition-all duration-300 transform hover:-translate-y-1"
+           [style.transition-delay]="i * 75 + 'ms'">
+        <div class="flex items-center justify-between mb-3">
+          <lucide-icon [name]="stat.icon" class="w-5 h-5 text-muted-foreground"></lucide-icon>
+          <span [class]="stat.change.startsWith('+') ? 'text-accent font-medium text-xs' : 'text-secondary font-medium text-xs'">
+            {{ stat.change }}
+          </span>
+        </div>
+        <p class="text-2xl font-display font-bold text-foreground">{{ stat.value }}</p>
+        <p class="text-xs text-muted-foreground mt-1">{{ stat.label }}</p>
+      </div>
+    }
+  </div>
+
+  <div class="grid lg:grid-cols-2 gap-6">
+    
+    <div class="rounded-xl border border-border bg-card p-6 shadow-card">
+      <div class="flex items-center gap-2 mb-6">
+        <lucide-icon name="layout-dashboard" class="w-5 h-5 text-muted-foreground"></lucide-icon>
+        <h2 class="font-display font-semibold text-foreground text-lg">Sesiones por kiosco</h2>
+      </div>
+      <div class="space-y-5">
+        @for (kiosk of kioskMetrics; track kiosk.name) {
+          <div>
+            <div class="flex items-center justify-between text-sm mb-2">
+              <span class="text-foreground font-medium">{{ kiosk.name }}</span>
+              <span class="text-muted-foreground">{{ kiosk.sessions }}</span>
+            </div>
+            <div class="h-2 w-full rounded-full bg-slate-200 overflow-hidden">
+              <div class="h-full rounded-full gradient-coral transition-all duration-1000 ease-out"
+                   [style.width.%]="(kiosk.sessions / maxSessions) * 100">
+              </div>
+            </div>
+          </div>
+        }
+      </div>
+    </div>
+
+    <div class="rounded-xl border border-border bg-card p-6 shadow-card">
+      <div class="flex items-center gap-2 mb-6">
+        <lucide-icon name="trophy" class="w-5 h-5 text-muted-foreground"></lucide-icon>
+        <h2 class="font-display font-semibold text-foreground text-lg">Tasa de completación</h2>
+      </div>
+      <div class="space-y-5">
+        @for (kiosk of kioskMetrics; track kiosk.name) {
+          <div class="flex items-center gap-4">
+            <span class="text-sm text-foreground font-medium w-32 truncate">{{ kiosk.name }}</span>
+            <div class="flex-1 h-2 rounded-full bg-slate-200 overflow-hidden">
+              <div class="h-full rounded-full gradient-gold transition-all duration-1000 ease-out delay-300"
+                   [style.width.%]="kiosk.completion">
+              </div>
+            </div>
+            <span class="text-sm text-muted-foreground w-10 text-right">{{ kiosk.completion }}%</span>
+          </div>
+        }
+      </div>
+    </div>
+
+  </div>
+</div>

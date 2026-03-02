@@ -1,1 +1,74 @@
-<p>experiencias works!</p>
+<div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+  <div class="mb-8">
+    <h1 class="text-3xl font-display font-bold text-foreground mb-2">
+      Experiencias
+    </h1>
+    <p class="text-muted-foreground">
+      Escanea tu QR en el kiosco y recibe tu video
+    </p>
+  </div>
+
+  <div class="rounded-2xl gradient-hero p-8 mb-8 shadow-elevated flex flex-col items-center text-center animate-fade-in-up">
+    <div class="w-48 h-48 rounded-2xl bg-primary-foreground flex items-center justify-center mb-6">
+      <div class="w-40 h-40 rounded-xl border-4 border-primary flex items-center justify-center relative">
+        <lucide-icon name="qr-code" class="w-24 h-24 text-primary"></lucide-icon>
+        
+        <div class="absolute inset-3 grid grid-cols-6 grid-rows-6 gap-0.5 opacity-20">
+          @for (isFilled of qrDots; track $index) {
+            <div [class]="'rounded-sm ' + (isFilled ? 'bg-primary' : '')"></div>
+          }
+        </div>
+      </div>
+    </div>
+    <h3 class="text-primary-foreground font-display font-bold text-xl mb-2">
+      Tu código QR
+    </h3>
+    <p class="text-primary-foreground/70 text-sm max-w-xs">
+      Muestra este código en cualquier kiosco para iniciar tu experiencia de baile
+    </p>
+  </div>
+
+  <div class="mb-4">
+    <h2 class="text-xl font-display font-semibold text-foreground mb-1">
+      Tus videos
+    </h2>
+    <p class="text-sm text-muted-foreground">
+      Los videos de tus experiencias en los kioscos
+    </p>
+  </div>
+
+  @if (videos.length > 0) {
+    <div class="grid sm:grid-cols-2 gap-4">
+      @for (video of videos; track video.id) {
+        <div class="rounded-xl border border-border bg-card shadow-card overflow-hidden group cursor-pointer animate-fade-in">
+          <div class="aspect-video bg-muted relative flex items-center justify-center">
+            <div class="gradient-hero absolute inset-0 opacity-80"></div>
+            <div class="relative z-10 w-14 h-14 rounded-full bg-secondary/90 flex items-center justify-center group-hover:scale-110 transition-transform">
+              <lucide-icon name="play" class="w-6 h-6 text-secondary-foreground"></lucide-icon>
+            </div>
+          </div>
+          
+          <div class="p-4">
+            <h3 class="font-display font-semibold text-foreground text-sm">
+              {{ video.kiosk }}
+            </h3>
+            <div class="flex items-center gap-3 mt-1">
+              <span class="flex items-center gap-1 text-xs text-muted-foreground">
+                <lucide-icon name="map-pin" class="w-3 h-3"></lucide-icon>
+                {{ video.location }}
+              </span>
+              <span class="text-xs text-muted-foreground">{{ video.date }}</span>
+            </div>
+          </div>
+        </div>
+      }
+    </div>
+  } @else {
+    <div class="rounded-xl border-2 border-dashed border-border p-12 text-center">
+      <lucide-icon name="play" class="w-8 h-8 text-muted-foreground/30 mx-auto mb-3"></lucide-icon>
+      <p class="text-sm text-muted-foreground">
+        Aún no tienes videos. ¡Visita un kiosco para empezar!
+      </p>
+    </div>
+  }
+</div>

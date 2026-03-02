@@ -1,5 +1,5 @@
 @if (auth.isLoggedIn()) {
-  <header class="fixed top-0 left-0 right-0 z-[100] glass">
+  <header class="sticky top-0 left-0 right-0 z-[100] glass border-b border-border transition-all duration-300">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
       <div class="flex items-center justify-between h-16">
         
@@ -13,12 +13,12 @@
         </div>
 
         <nav class="hidden md:flex items-center gap-1 relative h-10 px-1 bg-muted/20 rounded-xl">
-          @for (item of navItems; track item.path) {
+          @for (item of navItems(); track item.path) {
             <a [routerLink]="item.path" routerLinkActive="is-active" #rla="routerLinkActive"
                class="nav-link relative px-4 py-2 rounded-lg text-sm font-medium transition-all duration-300 z-10">
               @if (rla.isActive) {
                 <div class="active-pill absolute inset-0 bg-primary rounded-lg -z-[1]"></div>
-              }
+              } 
               <span class="flex items-center gap-2 transition-colors duration-200" 
                     [class.text-primary-foreground]="rla.isActive"
                     [class.text-muted-foreground]="!rla.isActive">
@@ -44,9 +44,9 @@
 
   @if (mobileOpen()) {
     <div animate.enter="nav-enter" animate.leave="nav-leave"
-         class="fixed inset-x-0 top-16 z-[90] glass border-b border-border p-4 md:hidden shadow-2xl">
+         class="fixed inset-x-0 top-16 z-[90] bg-white border-b border-border p-4 md:hidden shadow-2xl">
       <nav class="flex flex-col gap-1">
-        @for (item of navItems; track item.path) {
+        @for (item of navItems(); track item.path) {
           <a [routerLink]="item.path" routerLinkActive="gradient-hero text-primary-foreground shadow-inner"
              (click)="closeMobileMenu()"
              class="flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-medium transition-colors text-muted-foreground">
@@ -54,6 +54,10 @@
             {{ item.label }}
           </a>
         }
+        <button (click)="auth.logout()" class="flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-medium text-secondary mt-2 border-t border-border pt-4">
+            <lucide-icon name="log-out" class="w-4 h-4"></lucide-icon>
+            Cerrar Sesión
+        </button>
       </nav>
     </div>
   }

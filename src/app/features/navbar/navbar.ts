@@ -1,4 +1,4 @@
-import { Component, inject, signal } from '@angular/core';
+import { Component, computed, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterLink, RouterLinkActive } from '@angular/router';
 import { LucideAngularModule } from 'lucide-angular';
@@ -15,12 +15,19 @@ export class Navbar {
   public auth = inject(AuthService);
   mobileOpen = signal(false);
 
-  navItems = [
-    { path: '/recompensas', label: 'Recompensas', icon: 'trophy' },
-    { path: '/experiencias', label: 'Experiencias', icon: 'qr-code' },
-    { path: '/mapa', label: 'Mapa', icon: 'map' },
-    { path: '/dashboard', label: 'Dashboard', icon: 'layout-dashboard' },
+  private allNavItems = [
+    { path: '/recompensas', label: 'Recompensas', icon: 'trophy', adminOnly: false },
+    { path: '/experiencias', label: 'Experiencias', icon: 'qr-code', adminOnly: false },
+    { path: '/mapa', label: 'Mapa', icon: 'map', adminOnly: false },
+    { path: '/dashboard', label: 'Dashboard', icon: 'layout-dashboard', adminOnly: true },
   ];
+
+  navItems = computed(() => {
+    const role = this.auth.userRole();
+    return this.allNavItems.filter(item => 
+      !item.adminOnly || (item.adminOnly && role === 'admin')
+    );
+  });
 
   toggleMobileMenu() {
     this.mobileOpen.update(v => !v);

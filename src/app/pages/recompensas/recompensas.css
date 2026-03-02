@@ -1,0 +1,61 @@
+/* --- Overlay Oscuro Uniforme (Sin Blur) --- */
+.backdrop-dark-overlay {
+  background-color: rgba(0, 0, 0, 0.75); /* Oscurece el fondo igual que en tu imagen */
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+}
+
+/* --- Contenedor Blanco del Cupón --- */
+.coupon-info-container {
+  background-color: #ffffff; /* Fondo blanco para la info */
+  border-radius: 2rem; /* Bordes muy redondeados */
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+}
+
+/* --- Colores y Detalles --- */
+.text-coral-mundial {
+  color: #f87171;
+}
+
+.bg-coral-mundial {
+  background-color: #f87171;
+}
+
+.h-px {
+  height: 1px;
+  background-color: #e2e8f0; /* Color de borde estándar */
+  width: 100%;
+}
+
+/* --- Animaciones --- */
+.animate-fade-in-up {
+  animation: fadeInUp 0.5s ease-out forwards;
+}
+
+@keyframes fadeInUp {
+  from { opacity: 0; transform: translateY(12px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.animate-in {
+  animation-duration: 0.2s;
+  animation-fill-mode: forwards;
+}
+
+.zoom-in-95 {
+  animation-name: zoomIn;
+}
+
+@keyframes zoomIn {
+  from { transform: scale(0.95); opacity: 0; }
+  to { transform: scale(1); opacity: 1; }
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+.fade-in {
+  animation: fadeIn 0.2s ease-out;
+}

@@ -1,23 +1,73 @@
 .input-shadcn {
-  @apply w-full h-12 bg-white border border-slate-200 rounded-xl pl-12 pr-4 text-sm outline-none transition-all;
+  @apply w-full h-11 bg-white border border-slate-200 rounded-xl pl-11 pr-4 text-[14px] outline-none transition-all placeholder:text-slate-400;
 }
 
 .input-shadcn:focus {
-  @apply border-[#f35b33] ring-4 ring-orange-500/10;
+  @apply border-[#f35b33] ring-2 ring-orange-500/5;
 }
 
+lucide-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Animación de entrada de todo el bloque */
 .fade-up {
-  animation: fadeUp 0.6s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+  animation: fadeUp 0.5s ease-out forwards;
+}
+
+/* Animación específica para los campos extra de registro */
+.register-fields-container {
+  animation: slideDown 0.4s ease-out forwards;
+  overflow: hidden;
 }
 
 @keyframes fadeUp {
-  from { opacity: 0; transform: translateY(20px); }
+  from { opacity: 0; transform: translateY(10px); }
   to { opacity: 1; transform: translateY(0); }
 }
 
-input[type="date"]::-webkit-calendar-picker-indicator {
-  @apply opacity-40 cursor-pointer;
+@keyframes slideDown {
+  from { 
+    opacity: 0; 
+    max-height: 0;
+    transform: translateY(-10px);
+  }
+  to { 
+    opacity: 1; 
+    max-height: 500px; /* Suficiente para los campos */
+    transform: translateY(0);
+  }
 }
 
-.font-display { font-family: 'Space Grotesk', sans-serif; }
-.font-body { font-family: 'Inter', sans-serif; }
+/* Separador con líneas a los lados */
+.separator {
+  display: flex;
+  align-items: center;
+  text-align: center;
+  margin: 24px 0;
+}
+
+.separator::before,
+.separator::after {
+  content: '';
+  flex: 1;
+  border-bottom: 1px solid #f1f5f9; /* slate-100 */
+}
+
+.separator:not(:empty)::before {
+  margin-right: 1rem;
+}
+
+.separator:not(:empty)::after {
+  margin-left: 1rem;
+}
+
+.separator-text {
+  font-size: 10px;
+  font-weight: 800;
+  color: #94a3b8; /* slate-400 */
+  text-transform: uppercase;
+  letter-spacing: 0.2em;
+}
