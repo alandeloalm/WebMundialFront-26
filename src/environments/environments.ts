@@ -1,3 +1,3 @@
 export const environment = {
-  googleMapsApiKey: 'AIzaSyC2eXIsZvEUPAZQnNnfefzJ0vHBZ3lHN-A'
+  googleMapsApiKey: 'AIzaSyD5eT-qpsoa80WslWowKmEe4oUyspSDZXk'
 };
