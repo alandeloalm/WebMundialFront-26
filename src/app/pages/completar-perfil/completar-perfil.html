@@ -1,0 +1,95 @@
+<div class="min-h-screen flex">
+
+  <div class="hidden lg:flex lg:w-1/2 relative overflow-hidden">
+    <img src="/hero-mundial.jpg" alt="Mundial 2026 Monterrey"
+         class="absolute inset-0 w-full h-full object-cover">
+    <div class="absolute inset-0 bg-gradient-to-t from-[#0f172a]/95 via-[#0f172a]/40 to-transparent"></div>
+  </div>
+
+  <div class="flex-1 flex items-center justify-center p-6 lg:p-12 bg-background">
+    <div class="w-full max-w-md fade-up">
+
+      <div class="mb-6">
+        <div class="w-14 h-14 rounded-2xl bg-slate-100 flex items-center justify-center">
+          <lucide-icon name="user" class="w-7 h-7 text-slate-400"></lucide-icon>
+        </div>
+      </div>
+
+      <h2 class="text-3xl font-display font-bold text-foreground mb-2">
+        Completa tu perfil
+      </h2>
+      <p class="text-slate-500 mb-8">
+        Hola <span class="text-[#f35b33] font-semibold">{{ userName() }}</span>, necesitamos algunos datos más.
+      </p>
+
+      @if (errorMsg()) {
+        <div class="mb-4 px-4 py-3 bg-red-50 border border-red-200 rounded-xl text-sm text-red-600 flex items-center gap-2">
+          <lucide-icon name="circle-alert" class="w-4 h-4 shrink-0"></lucide-icon>
+          {{ errorMsg() }}
+        </div>
+      }
+
+      <form (ngSubmit)="onSubmit()" class="space-y-4">
+
+        <div class="space-y-1.5">
+          <label class="text-sm text-slate-500 flex items-center gap-1">
+            Nacionalidad <span class="text-[#f35b33]">*</span>
+          </label>
+          <app-pais-selector (countrySelected)="formData.nacionalidad = $event" />
+        </div>
+
+        <div class="space-y-1.5">
+          <label class="text-sm text-slate-500 flex items-center gap-1">
+            Fecha de nacimiento <span class="text-[#f35b33]">*</span>
+          </label>
+          <div class="flex items-center gap-3 px-4 py-3 rounded-xl border border-border bg-white focus-within:ring-2 focus-within:ring-[#f35b33]/30 focus-within:border-[#f35b33] transition-all">
+            <lucide-icon name="calendar" class="w-4 h-4 text-slate-400 shrink-0"></lucide-icon>
+            <input type="date" name="fecha_nacimiento" [(ngModel)]="formData.fecha_nacimiento"
+                   class="flex-1 bg-transparent text-sm text-foreground outline-none">
+          </div>
+        </div>
+
+        <div class="grid grid-cols-2 gap-4">
+
+          <div class="space-y-1.5">
+            <label class="text-sm text-slate-500">Teléfono</label>
+            <div class="flex items-center gap-3 px-4 py-3 rounded-xl border border-border bg-white focus-within:ring-2 focus-within:ring-[#f35b33]/30 focus-within:border-[#f35b33] transition-all">
+              <lucide-icon name="phone" class="w-4 h-4 text-slate-400 shrink-0"></lucide-icon>
+              <input type="tel" name="telefono" [(ngModel)]="formData.telefono"
+                     placeholder="Teléfono"
+                     class="flex-1 bg-transparent text-sm text-foreground placeholder:text-slate-400 outline-none min-w-0">
+            </div>
+          </div>
+
+          <div class="space-y-1.5">
+            <label class="text-sm text-slate-500">Género</label>
+            <app-genero-selector (generoSelected)="formData.genero = $event" />
+          </div>
+
+        </div>
+
+        <p class="text-xs text-slate-400">* Campos obligatorios</p>
+
+        <div class="flex gap-3 mt-6">
+          <button type="button"
+                  (click)="cancelar()"
+                  class="flex-1 py-3.5 rounded-xl border border-border text-slate-500 font-display font-semibold text-sm hover:bg-slate-50 hover:border-slate-300 transition-all">
+            Cancelar
+          </button>
+          <button type="submit" [disabled]="isLoading()"
+                  class="flex-2 flex-grow-[2] py-3.5 rounded-xl bg-[#f35b33] text-white font-display font-semibold text-sm hover:bg-[#e44a22] transition-all flex items-center justify-center gap-2 shadow-md shadow-orange-500/20 disabled:opacity-60 disabled:cursor-not-allowed">
+            @if (isLoading()) {
+              <lucide-icon name="loader-circle" class="w-4 h-4 animate-spin"></lucide-icon>
+              Guardando...
+            } @else {
+              Guardar y continuar
+              <lucide-icon name="chevron-right" class="w-4 h-4"></lucide-icon>
+            }
+          </button>
+        </div>
+
+      </form>
+    </div>
+  </div>
+
+</div>

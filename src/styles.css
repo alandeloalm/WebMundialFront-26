@@ -125,3 +125,13 @@
     border: 1px solid hsl(0 0% 100% / 0.3);
   }
 }
+
+@layer components {
+  .input-shadcn {
+    @apply w-full h-11 bg-white border border-slate-200 rounded-xl pl-11 pr-4 text-[14px] outline-none transition-all placeholder:text-slate-400;
+  }
+
+  .input-shadcn:focus {
+    @apply border-[#f35b33] ring-2 ring-orange-500/5;
+  }
+}

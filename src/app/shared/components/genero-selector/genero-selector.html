@@ -1,0 +1,35 @@
+<div class="relative country-selector">
+  <button type="button"
+        (click)="toggle($event)"
+        class="w-full h-full px-4 py-3 rounded-xl border bg-white text-left flex items-center gap-2 cursor-pointer transition-all"
+        [ngClass]="{
+          'border-[#f35b33] ring-2 ring-orange-500/5': dropdownOpen(),
+          'border-slate-200': !dropdownOpen()
+        }">
+    <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 text-slate-400 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+    <span class="flex-1 text-[14px] text-left"
+          [class.text-foreground]="selectedValue()"
+          [class.text-slate-400]="!selectedValue()">
+      {{ selectedLabel() }}
+    </span>
+    <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 text-slate-400 shrink-0 transition-transform"
+         [class.rotate-180]="dropdownOpen()"
+         viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+  </button>
+
+  @if (dropdownOpen()) {
+    <div class="absolute z-50 w-full mt-1 bg-white border border-border rounded-xl shadow-xl overflow-hidden">
+      @for (option of generoOptions; track option.value) {
+        <button type="button"
+                (click)="select(option.value)"
+                class="w-full px-4 py-2.5 text-sm text-left transition-colors hover:bg-orange-50 hover:text-[#f35b33]"
+                [ngClass]="{
+                  'text-[#f35b33] font-medium': selectedValue() === option.value,
+                  'text-foreground': selectedValue() !== option.value
+                }">
+          {{ option.label }}
+        </button>
+      }
+    </div>
+  }
+</div>
