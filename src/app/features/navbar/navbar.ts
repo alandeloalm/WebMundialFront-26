@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { RouterLink, RouterLinkActive } from '@angular/router';
 import { LucideAngularModule } from 'lucide-angular';
 import { AuthService } from '../../core/auth/auth.service';
+import { toast } from 'ngx-sonner';
 
 @Component({
   selector: 'app-navbar',
@@ -35,5 +36,12 @@ export class Navbar {
 
   closeMobileMenu() {
     this.mobileOpen.set(false);
+  }
+
+  logout() {
+    toast.info('Sesión cerrada', {
+      description: 'Hasta pronto 👋'
+    });
+    this.auth.logout()
   }
 }

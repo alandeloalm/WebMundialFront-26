@@ -6,6 +6,7 @@ import { AuthService } from '../../core/auth/auth.service';
 import { environment } from '../../../environments/environments';
 import { PaisSelector } from '../../shared/components/pais-selector/pais-selector';
 import { GeneroSelector } from '../../shared/components/genero-selector/genero-selector';
+import { toast } from 'ngx-sonner';
 
 declare const google: any;
 
@@ -72,7 +73,11 @@ export class Login implements OnInit {
   private handleLogin() {
     this.isLoading.set(true);
     this.auth.login(this.formData.email, this.formData.password).subscribe({
-      next: () => {},
+      next: (res) => {
+        toast.success(`¡Bienvenido, ${res.usuario.nombre}!`, {  
+          description: 'Sesión iniciada correctamente.'
+        });
+      },
       error: (err) => {
         const status = err.status;
         const msg = err.error?.error;
@@ -115,7 +120,9 @@ export class Login implements OnInit {
         this.isRegister.set(false);
         this.errorMsg.set(null);
         this.limpiarFormulario();
-        alert('¡Cuenta creada! Ahora inicia sesión.');
+        toast.success('¡Cuenta creada exitosamente!', {
+          description: 'Ahora inicia sesión para continuar.'
+        });
       },
       error: (err) => {
         const status = err.status;
@@ -143,7 +150,11 @@ export class Login implements OnInit {
   private handleGoogleCallback(idToken: string) {
     this.isLoading.set(true);
     this.auth.loginConGoogle(idToken).subscribe({
-      next: () => {},
+      next: (res) => {
+        toast.success(`¡Bienvenido, ${res.usuario.nombre}!`, { 
+          description: res.esNuevo ? 'Cuenta creada con Google.' : 'Sesión iniciada correctamente.'
+        });
+      },
       error: (err) => {
         const status = err.status;
         const msg = err.error?.error;

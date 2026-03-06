@@ -19,7 +19,7 @@ export class GeneroSelector {
     { value: 'Masculino',           label: 'Masculino' },
     { value: 'Femenino',            label: 'Femenino' },
     { value: 'Otro',                label: 'Otro' },
-    { value: 'Prefiero no decirlo', label: 'Prefiero no responder' },
+    { value: 'Prefiero no decirlo', label: 'Prefiero no decirlo' },
   ];
 
   selectedLabel = computed(() => {

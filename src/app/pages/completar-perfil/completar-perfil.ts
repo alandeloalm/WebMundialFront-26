@@ -1,4 +1,4 @@
-import { Component, inject, signal, HostListener } from '@angular/core';
+import { Component, inject, signal, HostListener, viewChild } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { LucideAngularModule } from 'lucide-angular';
@@ -15,6 +15,9 @@ import { GeneroSelector } from '../../shared/components/genero-selector/genero-s
 })
 export class CompletarPerfil {
   private auth = inject(AuthService);
+
+  private paisSelector   = viewChild(PaisSelector);
+  private generoSelector = viewChild(GeneroSelector);
 
   userName  = this.auth.userName;
   isLoading = signal(false);
@@ -57,5 +60,13 @@ export class CompletarPerfil {
         this.isLoading.set(false);
       }
     });
+  }
+
+  onPaisOpened() {
+    this.generoSelector()?.closeDropdown();
+  }
+
+  onGeneroOpened() {
+    this.paisSelector()?.onClickOutside();
   }
 }

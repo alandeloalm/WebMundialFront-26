@@ -35,7 +35,7 @@
           <label class="text-sm text-slate-500 flex items-center gap-1">
             Nacionalidad <span class="text-[#f35b33]">*</span>
           </label>
-          <app-pais-selector (countrySelected)="formData.nacionalidad = $event" />
+          <app-pais-selector (countrySelected)="formData.nacionalidad = $event" (opened)="onPaisOpened()"/>
         </div>
 
         <div class="space-y-1.5">
@@ -63,7 +63,7 @@
 
           <div class="space-y-1.5">
             <label class="text-sm text-slate-500">Género</label>
-            <app-genero-selector (generoSelected)="formData.genero = $event" />
+            <app-genero-selector (generoSelected)="formData.genero = $event" (opened)="onGeneroOpened()"/>
           </div>
 
         </div>

@@ -54,7 +54,9 @@
                      class="input-shadcn" placeholder="Nombre completo">
             </div>
 
-            <app-pais-selector #paisSelector (countrySelected)="formData.nationality = $event" (opened)="generoSelector.closeDropdown()" />
+            <app-pais-selector #paisSelector 
+              (countrySelected)="formData.nationality = $event" 
+              (opened)="generoSelector.closeDropdown()" />
 
             <div class="relative">
               <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
@@ -65,7 +67,9 @@
             </div>
 
             <div class="grid grid-cols-2 gap-3">
-              <app-genero-selector (generoSelected)="formData.gender = $event" (opened)="generoSelector.closeDropdown()"/>
+              <app-genero-selector #generoSelector 
+                  (generoSelected)="formData.gender = $event" 
+                  (opened)="paisSelector.onClickOutside()" />
               <div class="relative">
                 <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
                   <lucide-icon name="phone" class="w-4 h-4 text-slate-400"></lucide-icon>
