@@ -1,14 +1,8 @@
-import { Component } from '@angular/core';
+import { Component, OnInit, ElementRef, ViewChild, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { LucideAngularModule } from 'lucide-angular';
-
-interface VideoExperience {
-  id: number;
-  kiosk: string;
-  location: string;
-  date: string;
-  thumbnail: string | null;
-}
+import { ExperienciasService, VideoExperience } from '../../core/services/experiencias.service';
+import * as QRCode from 'qrcode';
 
 @Component({
   selector: 'app-experiencias',
@@ -17,23 +11,89 @@ interface VideoExperience {
   templateUrl: './experiencias.html',
   styleUrl: './experiencias.css',
 })
-export class Experiencias {
-  videos: VideoExperience[] = [
-    {
-      id: 1,
-      kiosk: "Kiosco Barrio Antiguo",
-      location: "Barrio Antiguo",
-      date: "15 Jun 2026",
-      thumbnail: null,
-    },
-    {
-      id: 2,
-      kiosk: "Kiosco Macroplaza",
-      location: "Macroplaza",
-      date: "16 Jun 2026",
-      thumbnail: null,
-    },
-  ];
+export class Experiencias implements OnInit {
+  private _qrCanvas!: ElementRef<HTMLCanvasElement>;
+  private qrGenerado = false;
 
-  qrDots = Array.from({ length: 36 }).map(() => Math.random() > 0.5);
+  @ViewChild('qrCanvas') set qrCanvas(el: ElementRef<HTMLCanvasElement>) {
+    if (el && this.qrData && !this.qrGenerado) {
+      this._qrCanvas = el;
+      this.generarQR();
+    }
+  }
+
+  qrData: string | null = null;
+  cargandoQR = true;
+  errorQR = false;
+
+  videos: VideoExperience[] = [];
+  cargandoVideos = true;
+
+  videoSeleccionado: VideoExperience | null = null;
+
+  constructor(
+    private experienciasService: ExperienciasService,
+    private cdr: ChangeDetectorRef
+  ) {}
+
+  ngOnInit(): void {
+    this.experienciasService.obtenerQR().subscribe({
+      next: (res) => {
+        this.qrData = res.qr_data;
+        this.cargandoQR = false;
+        this.cdr.detectChanges();
+      },
+      error: () => {
+        this.cargandoQR = false;
+        this.errorQR = true;
+        this.cdr.detectChanges();
+      },
+    });
+
+    this.experienciasService.obtenerVideos().subscribe({
+      next: (res) => {
+        this.videos = res.videos;
+        this.cargandoVideos = false;
+        this.cdr.detectChanges();
+      },
+      error: () => {
+        this.cargandoVideos = false;
+        this.cdr.detectChanges();
+      },
+    });
+  }
+
+  generarQR(): void {
+    if (!this._qrCanvas?.nativeElement || !this.qrData) return;
+    QRCode.toCanvas(this._qrCanvas.nativeElement, this.qrData, {
+      width: 160,
+      margin: 1,
+    }, (error: Error | null | undefined) => {
+      if (error) {
+        this.errorQR = true;
+      } else {
+        this.qrGenerado = true;
+      }
+      this.cdr.detectChanges();
+    });
+  }
+
+  abrirVideo(video: VideoExperience): void {
+    this.videoSeleccionado = video;
+  }
+
+  cerrarVideo(): void {
+    this.videoSeleccionado = null;
+  }
+
+  formatearFecha(fecha: string): string {
+    if (!fecha) return 'Sin fecha';
+    const date = new Date(fecha);
+    if (isNaN(date.getTime())) return 'Sin fecha';
+    return date.toLocaleDateString('es-MX', {
+      day: 'numeric',
+      month: 'short',
+      year: 'numeric',
+    });
+  }
 }

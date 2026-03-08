@@ -10,7 +10,7 @@ import {
   Globe, Calendar, Phone, Activity, Users, BarChart3,
   MapPin, Bus, Utensils, Library, Play, Tag, Gift,
   ChevronDown, Copy, Clock, ShieldCheck, CircleAlert, LoaderCircle,
-  Eye, EyeOff
+  Eye, EyeOff, Loader, Store
 } from 'lucide-angular';
 
 export const appConfig: ApplicationConfig = {
@@ -25,7 +25,7 @@ export const appConfig: ApplicationConfig = {
         Map, Trophy, QrCode, LayoutDashboard, Menu, X, LogOut,
         Users, Activity, BarChart3, MapPin, Bus, Utensils, Library,
         Play, Tag, Gift, ChevronDown, Copy, Clock, ShieldCheck,
-        CircleAlert, LoaderCircle, Eye, EyeOff
+        CircleAlert, LoaderCircle, Eye, EyeOff, Loader, Store
       })
     )
   ]

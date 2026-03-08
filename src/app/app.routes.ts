@@ -17,5 +17,5 @@ export const routes: Routes = [
     { path: 'recompensas', component: Recompensas, canActivate: [authGuard, perfilGuard] },
     { path: 'experiencias', component: Experiencias, canActivate: [authGuard, perfilGuard] },
     { path: 'mapa', component: Mapa, canActivate: [authGuard, perfilGuard] },
-    { path: 'dashboard', component: Dashboard, canActivate: [authGuard, roleGuard], data: { expectedRole: 'admin' } },
+    { path: 'dashboard', component: Dashboard },
 ];

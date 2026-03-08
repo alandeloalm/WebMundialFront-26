@@ -13,7 +13,7 @@
       <div>
         <p class="text-primary-foreground/70 text-sm">Progreso general</p>
         <p class="text-primary-foreground text-2xl font-display font-bold">
-          {{ completedCount }} / {{ totalKiosks }} kioscos
+          {{ kioskosCompletados }} / {{ totalKiosks }} kioscos
         </p>
       </div>
       <div class="w-14 h-14 rounded-2xl gradient-gold flex items-center justify-center">
@@ -21,7 +21,7 @@
       </div>
     </div>
     <div class="w-full h-2 rounded-full bg-primary-foreground/10">
-      <div class="h-full rounded-full gradient-coral transition-all duration-1000" 
+      <div class="h-full rounded-full gradient-coral transition-all duration-1000"
            [style.width.%]="progress"></div>
     </div>
   </div>
@@ -31,24 +31,56 @@
     <h2 class="text-xl font-display font-bold text-foreground">Cupones disponibles</h2>
   </div>
 
-  <div class="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-4 gap-4">
-    @for (coupon of visibleCoupons; track coupon.id; let i = $index) {
-      <div (click)="openCoupon(coupon)" 
-           class="rounded-xl border border-border bg-card shadow-card overflow-hidden hover:shadow-elevated transition-all cursor-pointer hover:scale-[1.02] active:scale-[0.98] animate-fade-in">
-        <div class="aspect-square bg-muted flex items-center justify-center">
-          <img [src]="coupon.image" [alt]="coupon.store" class="w-16 h-16 object-contain opacity-40">
+  @if (cargando) {
+    <div class="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-4 gap-4">
+      @for (i of [1, 2, 3, 4]; track i) {
+        <div class="rounded-xl border border-border bg-card overflow-hidden animate-pulse">
+          <div class="aspect-square bg-muted"></div>
+          <div class="p-3 space-y-2">
+            <div class="h-4 bg-muted rounded w-3/4"></div>
+            <div class="h-3 bg-muted rounded w-1/2"></div>
+          </div>
         </div>
-        <div class="p-3">
-          <h3 class="font-display font-semibold text-foreground text-sm truncate">
-            {{ coupon.store }}
-          </h3>
-          <p class="text-xs text-muted-foreground mt-1 line-clamp-2">
-            {{ coupon.discount }}
-          </p>
+      }
+    </div>
+  } @else if (recompensas.length > 0) {
+    <div class="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-4 gap-4">
+      @for (coupon of visibleCoupons; track coupon.campana_id) {
+        <div (click)="openCoupon(coupon)"
+             class="rounded-xl border border-border bg-card shadow-card overflow-hidden transition-all cursor-pointer hover:scale-[1.02] active:scale-[0.98] animate-fade-in relative"
+             [class.opacity-60]="!coupon.desbloqueado"
+             [class.grayscale]="!coupon.desbloqueado">
+            <div class="aspect-square bg-muted flex items-center justify-center p-6 relative">
+              @if (coupon.comercio_logo) {
+                <img [src]="coupon.comercio_logo" [alt]="coupon.comercio_nombre" class="max-w-full max-h-full object-contain">
+              } @else {
+                <lucide-icon name="store" class="w-10 h-10 text-muted-foreground/30"></lucide-icon>
+              }
+              @if (!coupon.desbloqueado) {
+                <div class="absolute inset-0 flex items-center justify-center bg-black/30 rounded-t-xl">
+                  <lucide-icon name="lock" class="w-8 h-8 text-white/80"></lucide-icon>
+                </div>
+              }
+            </div>
+          <div class="p-3">
+            <h3 class="font-display font-semibold text-foreground text-sm truncate">
+              {{ coupon.comercio_nombre }}
+            </h3>
+            <p class="text-xs text-muted-foreground mt-1 line-clamp-2">
+              {{ coupon.titulo }}
+            </p>
+          </div>
         </div>
-      </div>
-    }
-  </div>
+      }
+    </div>
+  } @else {
+    <div class="rounded-xl border-2 border-dashed border-border p-12 text-center">
+      <lucide-icon name="tag" class="w-8 h-8 text-muted-foreground/30 mx-auto mb-3"></lucide-icon>
+      <p class="text-sm text-muted-foreground">
+        No hay recompensas disponibles por el momento.
+      </p>
+    </div>
+  }
 
   @if (hasMore) {
     <div class="mt-6 flex justify-center">
@@ -65,7 +97,7 @@
       Recompensa final
     </h3>
     <p class="text-sm text-muted-foreground">
-      Completa los 4 kioscos para desbloquear la recompensa especial del Mundial 2026
+      Completa los {{ totalKiosks }} kioscos para desbloquear la recompensa especial del Mundial 2026
     </p>
   </div>
 </div>
@@ -73,76 +105,95 @@
 @if (selectedCoupon) {
   <div class="fixed inset-0 z-[120] flex items-center justify-center p-4 backdrop-dark-overlay animate-in fade-in" (click)="closeModal()">
     <div class="coupon-info-container w-full max-w-md overflow-hidden animate-in zoom-in-95" (click)="$event.stopPropagation()">
-      
+
       <div class="gradient-hero p-6 pb-8 relative">
         <button (click)="closeModal()" class="absolute top-4 right-4 text-primary-foreground/50 hover:text-primary-foreground">
           <lucide-icon name="x" class="w-5 h-5"></lucide-icon>
         </button>
         <div class="flex items-center gap-3 mb-3">
           <div class="w-14 h-14 rounded-xl bg-primary-foreground/10 flex items-center justify-center backdrop-blur-sm">
-            <img [src]="selectedCoupon.image" [alt]="selectedCoupon.store" class="w-8 h-8 object-contain opacity-60">
+            @if (selectedCoupon.comercio_logo) {
+              <img [src]="selectedCoupon.comercio_logo" [alt]="selectedCoupon.comercio_nombre" class="w-8 h-8 object-contain">
+            } @else {
+              <lucide-icon name="store" class="w-6 h-6 text-primary-foreground/60"></lucide-icon>
+            }
           </div>
           <div>
             <p class="text-xs text-primary-foreground/60 font-medium uppercase tracking-wider">
-              {{ selectedCoupon.category }}
+              {{ selectedCoupon.comercio_categoria }}
             </p>
             <h3 class="text-xl font-display font-bold text-primary-foreground">
-              {{ selectedCoupon.store }}
+              {{ selectedCoupon.comercio_nombre }}
             </h3>
           </div>
         </div>
         <p class="text-primary-foreground/90 text-lg font-semibold">
-          {{ selectedCoupon.discount }}
+          {{ selectedCoupon.titulo }}
         </p>
       </div>
 
       <div class="p-6 space-y-5">
-        <p class="text-sm text-muted-foreground leading-relaxed">
-          {{ selectedCoupon.description }}
-        </p>
+        @if (selectedCoupon.desbloqueado) {
+          @if (selectedCoupon.descripcion) {
+            <p class="text-sm text-muted-foreground leading-relaxed">
+              {{ selectedCoupon.descripcion }}
+            </p>
+          }
 
-        <div class="rounded-xl border-2 border-dashed border-secondary/30 bg-secondary/5 p-4">
-          <p class="text-xs text-muted-foreground mb-2 font-medium">Código del cupón</p>
-          <div class="flex items-center justify-between gap-3">
-            <code class="text-lg font-mono font-bold text-foreground tracking-widest">
-              {{ selectedCoupon.code }}
-            </code>
-            <button (click)="handleCopyCode(selectedCoupon.code)" 
-                    [class]="copied ? 'bg-green-600 text-white border-green-600' : 'bg-primary text-primary-foreground'"
-                    class="px-4 py-1.5 rounded-lg text-sm flex items-center gap-1.5 shrink-0 transition-all font-bold">
-              <lucide-icon [name]="copied ? 'check-circle-2' : 'copy'" class="w-3.5 h-3.5"></lucide-icon>
-              {{ copied ? 'Copiado' : 'Copiar' }}
-            </button>
-          </div>
-        </div>
+          @if (selectedCoupon.codigo) {
+            <div class="rounded-xl border-2 border-dashed border-secondary/30 bg-secondary/5 p-4">
+              <p class="text-xs text-muted-foreground mb-2 font-medium">Código del cupón</p>
+              <div class="flex items-center justify-between gap-3">
+                <code class="text-lg font-mono font-bold text-foreground tracking-widest">
+                  {{ selectedCoupon.codigo }}
+                </code>
+                <button (click)="handleCopyCode(selectedCoupon.codigo!)"
+                        [class]="copied ? 'bg-green-600 text-white border-green-600' : 'bg-primary text-primary-foreground'"
+                        class="px-4 py-1.5 rounded-lg text-sm flex items-center gap-1.5 shrink-0 transition-all font-bold">
+                  <lucide-icon [name]="copied ? 'check-circle-2' : 'copy'" class="w-3.5 h-3.5"></lucide-icon>
+                  {{ copied ? 'Copiado' : 'Copiar' }}
+                </button>
+              </div>
+            </div>
+          }
 
-        <div class="flex gap-4">
-          <div class="flex items-center gap-2 text-sm text-muted-foreground">
-            <lucide-icon name="calendar" class="w-4 h-4 text-coral-mundial"></lucide-icon>
-            <span>Desde: <strong class="text-foreground">{{ selectedCoupon.validFrom }}</strong></span>
+          <div class="flex gap-4">
+            <div class="flex items-center gap-2 text-sm text-muted-foreground">
+              <lucide-icon name="calendar" class="w-4 h-4 text-coral-mundial"></lucide-icon>
+              <span>Desde: <strong class="text-foreground">{{ formatearFecha(selectedCoupon.inicia_en) }}</strong></span>
+            </div>
+            <div class="flex items-center gap-2 text-sm text-muted-foreground">
+              <lucide-icon name="clock" class="w-4 h-4 text-coral-mundial"></lucide-icon>
+              <span>Hasta: <strong class="text-foreground">{{ formatearFecha(selectedCoupon.expira_en) }}</strong></span>
+            </div>
           </div>
-          <div class="flex items-center gap-2 text-sm text-muted-foreground">
-            <lucide-icon name="clock" class="w-4 h-4 text-coral-mundial"></lucide-icon>
-            <span>Hasta: <strong class="text-foreground">{{ selectedCoupon.validUntil }}</strong></span>
-          </div>
-        </div>
 
-        <div class="h-px"></div>
-
-        <div>
-          <div class="flex items-center gap-2 mb-3">
-            <lucide-icon name="shield-check" class="w-4 h-4 text-muted-foreground"></lucide-icon>
-            <p class="text-sm font-semibold text-foreground">Términos y condiciones</p>
+          @if (selectedCoupon.terminos) {
+            <div class="h-px"></div>
+            <div>
+              <div class="flex items-center gap-2 mb-3">
+                <lucide-icon name="shield-check" class="w-4 h-4 text-muted-foreground"></lucide-icon>
+                <p class="text-sm font-semibold text-foreground">Términos y condiciones</p>
+              </div>
+              <ul class="space-y-2">
+                @for (term of parsearTerminos(selectedCoupon.terminos!); track $index) {
+                  <li class="flex items-start gap-2 text-xs text-muted-foreground">
+                    <span class="mt-1.5 w-1.5 h-1.5 rounded-full bg-coral-mundial shrink-0"></span>
+                    {{ term }}
+                  </li>
+                }
+              </ul>
+            </div>
+          }
+        } @else {
+          <div class="text-center py-6">
+            <lucide-icon name="lock" class="w-12 h-12 text-muted-foreground/30 mx-auto mb-3"></lucide-icon>
+            <h4 class="font-display font-bold text-foreground mb-2">Cupón bloqueado</h4>
+            <p class="text-sm text-muted-foreground">
+              Visita el kiosco asociado para desbloquear esta recompensa y obtener tu código.
+            </p>
           </div>
-          <ul class="space-y-2">
-            @for (term of selectedCoupon.terms; track $index) {
-              <li class="flex items-start gap-2 text-xs text-muted-foreground">
-                <span class="mt-1.5 w-1.5 h-1.5 rounded-full bg-coral-mundial shrink-0"></span>
-                {{ term }}
-              </li>
-            }
-          </ul>
-        </div>
+        }
       </div>
     </div>
   </div>
