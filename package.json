@@ -5,7 +5,7 @@
     "set-env": "node set-env.js",
     "ng": "ng",
     "start": "ng serve",
-    "build": "ng build",
+    "build": "npm run build",
     "watch": "ng build --watch --configuration development",
     "test": "ng test"
   },
