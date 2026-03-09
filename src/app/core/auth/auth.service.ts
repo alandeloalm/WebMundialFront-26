@@ -3,7 +3,7 @@ import { Injectable, signal, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Router } from '@angular/router';
 import { Observable, tap } from 'rxjs';
-import { environment } from '../../../environments/environments';
+import { environment } from '../../../environments/environment';
 
 // ─── Interfaces ───────────────────────────────────────────────────────────────
 interface LoginResponse {

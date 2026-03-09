@@ -3,7 +3,7 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { LucideAngularModule } from 'lucide-angular';
 import { AuthService } from '../../core/auth/auth.service';
-import { environment } from '../../../environments/environments';
+import { environment } from '../../../environments/environment';
 import { PaisSelector } from '../../shared/components/pais-selector/pais-selector';
 import { GeneroSelector } from '../../shared/components/genero-selector/genero-selector';
 import { toast } from 'ngx-sonner';
