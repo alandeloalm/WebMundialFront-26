@@ -1,21 +1,16 @@
 import { CommonModule } from '@angular/common';
-import { Component, ElementRef, ViewChild, AfterViewInit } from '@angular/core';
+import { Component, ElementRef, ViewChild, AfterViewInit, inject, ChangeDetectorRef, ChangeDetectionStrategy } from '@angular/core';
+import { FormsModule } from '@angular/forms';
 import { importLibrary } from '@googlemaps/js-api-loader';
 import { LucideAngularModule } from 'lucide-angular';
-
-interface MapLocation {
-  id: number;
-  name: string;
-  description: string;
-  type: 'kiosk' | 'restaurant' | 'transport' | 'attraction' | 'museum';
-  lat: number;
-  lng: number;
-}
+import { AuthService } from '../../core/auth/auth.service';
+import { LugaresService, Lugar } from '../../core/services/lugares.service';
 
 @Component({
   selector: 'app-mapa',
   standalone: true,
-  imports: [CommonModule, LucideAngularModule],
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  imports: [CommonModule, LucideAngularModule, FormsModule],
   templateUrl: './mapa.html',
   styleUrl: './mapa.css',
 })
@@ -24,45 +19,94 @@ export class Mapa implements AfterViewInit {
   @ViewChild('mapContainer', { static: false })
   mapElement!: ElementRef<HTMLDivElement>;
 
+  private auth = inject(AuthService);
+  private lugaresService = inject(LugaresService);
+  private cdr = inject(ChangeDetectorRef);
+
   map!: google.maps.Map;
   markers: google.maps.marker.AdvancedMarkerElement[] = [];
+  locations: Lugar[] = [];
 
-  locations: MapLocation[] = [
-    { id: 1, name: "Fashion Drive", description: "El centro comercial más exclusivo de San Pedro Garza García. Es un referente de la modernidad regia, albergando las firmas de moda más prestigiosas del mundo, una amplia oferta cinematográfica y una terraza gastronómica con vistas de primer nivel.", type: "kiosk", lat: 25.6511, lng: -100.33482 },
-    { id: 2, name: "Parque Fundidora", description: "Un museo de sitio arqueológico industrial único en su tipo. Este vasto parque urbano ocupa los terrenos de lo que fue la primera siderúrgica de América Latina, combinando historia industrial con amplias áreas verdes, pistas de patinaje y centros culturales.", type: "kiosk", lat: 25.67702, lng: -100.28997 },
-    { id: 3, name: "Barrio Antiguo", description: "El corazón histórico y bohemio de Monterrey. Alberga casonas coloniales del siglo XVIII, galerías de arte y una vibrante oferta gastronómica que fusiona la tradición con la modernidad.", type: "kiosk", lat: 25.6694, lng: -100.3064 },
-    { id: 4, name: "Estadio BBVA", description: 'Conocido como "El Gigante de Acero", es uno de los estadios más modernos de Latinoamérica y sede oficial de la Copa del Mundo 2026. Destaca por su arquitectura vanguardista y la impresionante vista que ofrece hacia el Cerro de la Silla desde las tribunas.', type: "kiosk", lat: 25.66905, lng: -100.24389 },
-    { id: 5, name: "El Rey del Cabrito", description: "Institución gastronómica de Monterrey famosa por su preparación del cabrito al pastor sobre brasas de carbón. Sus paredes están decoradas con trofeos y fotografías de celebridades, ofreciendo una experiencia visual y culinaria profundamente arraigada en la tradición del norte.", type: "restaurant", lat: 25.6639, lng: -100.30892 },
-    { id: 6, name: "El Gaucho", description: "Restaurante de gran tradición especializado en cortes de carne al estilo argentino-regio. Con décadas de historia, es reconocido por la consistencia en su calidad, sus famosas empanadas y un servicio que transporta a los comensales a la época dorada de los asados familiares.", type: "restaurant", lat: 25.64192, lng: -100.28699 },
-    { id: 7, name: "La Nacional", description: "Restaurante de cocina regional que rinde homenaje a los ingredientes locales con un toque sofisticado. Sus cortes de carne premium, fideos secos con chorizo y su atmósfera acogedora lo convierten en el lugar ideal para entender la pasión regia por la buena mesa.", type: "restaurant", lat: 25.67418, lng: -100.36622 },
-    { id: 8, name: "Pangea", description: "Un icono de la alta cocina mexicana contemporánea. El menú, diseñado con técnicas francesas aplicadas a productos locales, ha colocado a este establecimiento de forma consistente en las listas de los mejores restaurantes del mundo, elevando el estándar culinario de la región.", type: "restaurant", lat: 25.64792, lng: -100.3561 },
-    { id: 9, name: "Estadio Universitario (Tigres)", description: `Hogar de los Tigres de la UANL y epicentro de la pasión futbolera en Monterrey. Conocido como "El Volcán" por el fervor de su afición, es un sitio legendario donde el deporte se vive con una intensidad única en todo el país.`, type: "attraction", lat: 25.74377, lng: -100.30112 },
-    { id: 10, name: "Paseo Santa Lucía", description: "Un río artificial de 2.5 kilómetros que serpentea entre fuentes, puentes y áreas verdes. Es el paseo turístico por excelencia, ofreciendo recorridos en embarcaciones que conectan la vida urbana del centro con la historia industrial de Fundidora.", type: "attraction", lat: 25.67522, lng: -100.28775 },
-    { id: 11, name: "Mirador del Obispado", description: "Situado en el punto más alto del Cerro del Obispado, es el hogar de una de las banderas monumentales más grandes del país. Ofrece la mejor perspectiva fotográfica de la ciudad, rodeada por las montañas que definen el paisaje regio.", type: "attraction", lat: 25.67458, lng: -100.34649 },
-    { id: 12, name: "Cascada Cola de Caballo", description: "Una espectacular caída de agua de 25 metros cuya forma emula la cola de un caballo. Ubicada en el pintoresco municipio de Santiago, es un refugio natural que ofrece frescura, vegetación exuberante y una conexión inmediata con la Sierra Madre.", type: "attraction", lat: 25.37102, lng: -100.15576 },
-    { id: 13, name: "Museo MARCO", description: "Referente del arte contemporáneo en México, diseñado por Ricardo Legorreta. Su famosa escultura de 'La Paloma' es el punto de encuentro por excelencia en la Macroplaza.", type: "museum", lat: 25.66526, lng: -100.31021 },
-    { id: 14, name: "MUNE (Museo del Noreste)", description: "Un viaje a través del tiempo que relata la historia de Nuevo León, Coahuila, Tamaulipas y Texas. Destaca por su arquitectura moderna unida al Paseo Santa Lucía.", type: "museum", lat: 25.67178, lng: -100.30642 },
-    { id: 15, name: "Horno 3 (Museo del Acero)", description: "Antiguo horno industrial transformado en un centro de ciencia y tecnología. Ofrece un espectáculo de fuego y la oportunidad de caminar por las estructuras originales de la fundidora.", type: "museum", lat: 25.6786, lng: -100.2842 },
-    { id: 16, name: "Museo de Historia Mexicana", description: "El recinto histórico más importante del norte de México. Exhibe desde piezas prehispánicas hasta objetos del siglo XX, narrando la evolución de la nación.", type: "museum", lat: 25.67167, lng: -100.30645 },
+  isAdmin = this.auth.userRole() === 'admin';
+
+  showModal = false;
+  editando: Lugar | null = null;
+  guardando = false;
+  imagenPreview: string | null = null;
+  imagenFile: File | null = null;
+
+  showConfirmModal = false;
+  lugarAConfirmar: Lugar | null = null;
+  accionConfirmar: 'desactivar' | 'activar' = 'desactivar';
+
+  categoriaActiva = 'todos';
+
+  readonly tabs = [
+    { key: 'todos',      label: 'Todos',        icon: 'layout-grid' },
+    { key: 'kiosko',     label: 'Kioskos',       icon: 'trophy' },
+    { key: 'restaurant', label: 'Restaurantes',  icon: 'utensils' },
+    { key: 'attraction', label: 'Atracciones',   icon: 'map-pin' },
+    { key: 'museum',     label: 'Museos',        icon: 'library' },
+    { key: 'transport',  label: 'Transporte',    icon: 'bus' },
   ];
 
+  form: Omit<Lugar, 'id'> = {
+    nombre: '',
+    descripcion: '',
+    categoria: 'kiosko',
+    latitud: 0,
+    longitud: 0,
+    imagen_url: '',
+  };
+
+  private readonly ordenCategorias: Record<string, number> = {
+    kiosko: 0,
+    attraction: 1,
+    restaurant: 2,
+    museum: 3,
+    transport: 4,
+  };
+
+  get locationsFiltradas(): Lugar[] {
+    const lista = this.categoriaActiva === 'todos'
+      ? this.locations
+      : this.locations.filter(l => l.categoria === this.categoriaActiva);
+
+    return [...lista].sort((a, b) =>
+      (this.ordenCategorias[a.categoria] ?? 99) - (this.ordenCategorias[b.categoria] ?? 99)
+    );
+  }
+
+  cambiarTab(key: string) {
+    this.categoriaActiva = key;
+    this.cdr.markForCheck();
+  }
+
   async ngAfterViewInit() {
-    try {
-      const { Map } = await importLibrary('maps') as google.maps.MapsLibrary;
-      const { AdvancedMarkerElement, PinElement } = await importLibrary('marker') as google.maps.MarkerLibrary;
+    const obs = this.isAdmin
+      ? this.lugaresService.obtenerTodosLugares()
+      : this.lugaresService.obtenerLugares();
 
-      this.map = new Map(this.mapElement.nativeElement, {
-        center: { lat: 25.6714, lng: -100.3097 },
-        zoom: 14,
-        mapId: 'DEMO_MAP_ID',
-        disableDefaultUI: true
-      });
-
-      this.addMarkers(AdvancedMarkerElement, PinElement);
-
-    } catch (error) {
-      console.error("Error al inicializar el mapa:", error);
-    }
+    obs.subscribe({
+      next: async ({ lugares }) => {
+        this.locations = lugares;
+        this.cdr.markForCheck();
+        try {
+          const { Map } = await importLibrary('maps') as google.maps.MapsLibrary;
+          const { AdvancedMarkerElement, PinElement } = await importLibrary('marker') as google.maps.MarkerLibrary;
+          this.map = new Map(this.mapElement.nativeElement, {
+            center: { lat: 25.6714, lng: -100.3097 },
+            zoom: 14,
+            mapId: 'DEMO_MAP_ID',
+            disableDefaultUI: true
+          });
+          this.addMarkers(AdvancedMarkerElement, PinElement);
+        } catch (error) {
+          console.error('Error al inicializar el mapa:', error);
+        }
+      },
+      error: (err) => console.error('Error:', err)
+    });
   }
 
   addMarkers(
@@ -73,26 +117,71 @@ export class Mapa implements AfterViewInit {
 
     this.locations.forEach(loc => {
       const pin = new PinElement({
-        background: loc.type === 'museum' ? '#7c3aed' : // Violeta para museos
-                    loc.type === 'kiosk' ? '#fb923c' :
-                    loc.type === 'restaurant' ? '#fbbf24' :
+        background: loc.categoria === 'museum'     ? '#7c3aed' :
+                    loc.categoria === 'kiosko'     ? '#fb923c' :
+                    loc.categoria === 'restaurant' ? '#fbbf24' :
+                    loc.categoria === 'attraction' ? '#10b981' :
                     '#3b82f6',
         glyphColor: '#ffffff',
-        borderColor: '#ffffff'
+        borderColor: loc.activo === false ? '#ef4444' : '#ffffff',
       });
 
       const marker = new AdvancedMarkerElement({
         map: this.map,
-        position: { lat: loc.lat, lng: loc.lng },
-        title: loc.name,
-        content: pin // ✅ SE PASA EL OBJETO DIRECTO (Corrige el error de tu imagen)
+        position: { lat: Number(loc.latitud), lng: Number(loc.longitud) },
+        title: loc.nombre,
+        content: pin
       });
 
       marker.addListener('gmp-click', () => {
+        const categoriaColor: Record<string, string> = {
+          kiosko:     '#fb923c',
+          restaurant: '#fbbf24',
+          attraction: '#10b981',
+          museum:     '#7c3aed',
+          transport:  '#3b82f6',
+        };
+        const categoriaLabel: Record<string, string> = {
+          kiosko:     'Kiosko',
+          restaurant: 'Restaurante',
+          attraction: 'Atracción',
+          museum:     'Museo',
+          transport:  'Transporte',
+        };
+
+        const color = categoriaColor[loc.categoria] ?? '#64748b';
+        const label = categoriaLabel[loc.categoria] ?? loc.categoria;
+
+        const imgHtml = loc.imagen_url
+          ? `<img src="${loc.imagen_url}" alt="${loc.nombre}"
+                 style="width:100%;height:140px;object-fit:cover;border-radius:10px 10px 0 0;display:block;" />`
+          : '';
+
+        const inactivoBadge = loc.activo === false
+          ? `<span style="background:#fee2e2;color:#ef4444;font-size:10px;font-weight:700;
+                          padding:2px 8px;border-radius:99px;border:1px solid #fca5a5;">
+               Inactivo
+             </span>`
+          : '';
+
         infoWindow.setContent(`
-          <div style="padding:8px; color:#333; font-family:sans-serif;">
-            <b style="font-size:14px;">${loc.name}</b><br>
-            <span style="font-size:12px;">${loc.description}</span>
+          <div style="width:240px;font-family:'Inter',sans-serif;border-radius:12px;overflow:hidden;margin:-12px -12px -12px -12px;">
+            ${imgHtml}
+            <div style="padding:12px 14px 14px;">
+              <div style="display:flex;align-items:center;gap:6px;margin-bottom:6px;">
+                <span style="background:${color}22;color:${color};font-size:10px;font-weight:700;
+                              padding:2px 8px;border-radius:99px;text-transform:uppercase;letter-spacing:.5px;">
+                  ${label}
+                </span>
+                ${inactivoBadge}
+              </div>
+              <div style="font-size:14px;font-weight:700;color:#0f172a;margin-bottom:4px;line-height:1.3;">
+                ${loc.nombre}
+              </div>
+              <div style="font-size:12px;color:#64748b;line-height:1.5;">
+                ${loc.descripcion}
+              </div>
+            </div>
           </div>
         `);
         infoWindow.open({ anchor: marker, map: this.map });
@@ -102,20 +191,125 @@ export class Mapa implements AfterViewInit {
     });
   }
 
-  focusLocation(loc: MapLocation) {
+  focusLocation(loc: Lugar) {
     if (!this.map) return;
-    this.map.panTo({ lat: loc.lat, lng: loc.lng });
+    this.map.panTo({ lat: Number(loc.latitud), lng: Number(loc.longitud) });
     this.map.setZoom(17);
   }
 
-  getIconName(type: string): string {
-    switch(type) {
-      case 'museum': return 'library';
-      case 'kiosk': return 'trophy';
+  getIconName(categoria: string): string {
+    switch (categoria) {
+      case 'museum':     return 'library';
+      case 'kiosko':     return 'trophy';
       case 'restaurant': return 'utensils';
-      case 'transport': return 'bus'; 
+      case 'transport':  return 'bus';
       case 'attraction': return 'map-pin';
-      default: return 'info';
+      default:           return 'info';
+    }
+  }
+
+  abrirModalNuevo() {
+    this.editando = null;
+    this.imagenPreview = null;
+    this.imagenFile = null;
+    this.form = { nombre: '', descripcion: '', categoria: 'kiosko', latitud: 0, longitud: 0, imagen_url: '' };
+    this.showModal = true;
+    this.cdr.markForCheck();
+  }
+
+  abrirModalEditar(loc: Lugar, event: Event) {
+    event.stopPropagation();
+    this.editando = loc;
+    this.imagenPreview = loc.imagen_url || null;
+    this.imagenFile = null;
+    this.form = {
+      nombre: loc.nombre,
+      descripcion: loc.descripcion,
+      categoria: loc.categoria,
+      latitud: loc.latitud,
+      longitud: loc.longitud,
+      imagen_url: loc.imagen_url
+    };
+    this.showModal = true;
+    this.cdr.markForCheck();
+  }
+
+  cerrarModal() {
+    this.showModal = false;
+    this.editando = null;
+    this.cdr.markForCheck();
+  }
+
+  onImagenSeleccionada(event: Event) {
+    const input = event.target as HTMLInputElement;
+    if (!input.files?.length) return;
+    const file = input.files[0];
+    this.imagenFile = file;
+    const reader = new FileReader();
+    reader.onload = () => {
+      this.imagenPreview = reader.result as string;
+      this.cdr.markForCheck();
+    };
+    reader.readAsDataURL(file);
+  }
+
+  guardar() {
+    this.guardando = true;
+    const imagen = this.imagenFile ?? undefined;
+
+    const op = this.editando
+      ? this.lugaresService.editarLugar(this.editando.id, this.form, imagen)
+      : this.lugaresService.crearLugar(this.form, imagen);
+
+    op.subscribe({
+      next: ({ lugar }) => {
+        if (this.editando) {
+          const i = this.locations.findIndex(l => l.id === this.editando!.id);
+          if (i !== -1) this.locations[i] = lugar;
+        } else {
+          this.locations = [...this.locations, lugar];
+        }
+        this.guardando = false;
+        this.cerrarModal();
+      },
+      error: () => {
+        this.guardando = false;
+        this.cdr.markForCheck();
+      }
+    });
+  }
+
+  abrirConfirm(loc: Lugar, accion: 'desactivar' | 'activar', event: Event) {
+    event.stopPropagation();
+    this.lugarAConfirmar = loc;
+    this.accionConfirmar = accion;
+    this.showConfirmModal = true;
+    this.cdr.markForCheck();
+  }
+
+  cerrarConfirm() {
+    this.showConfirmModal = false;
+    this.lugarAConfirmar = null;
+    this.cdr.markForCheck();
+  }
+
+  confirmarAccion() {
+    if (!this.lugarAConfirmar) return;
+    const loc = this.lugarAConfirmar;
+    if (this.accionConfirmar === 'desactivar') {
+      this.lugaresService.desactivarLugar(loc.id).subscribe(() => {
+        const i = this.locations.findIndex(l => l.id === loc.id);
+        if (i !== -1) this.locations[i] = { ...this.locations[i], activo: false };
+        this.locations = [...this.locations];
+        this.cerrarConfirm();
+      });
+    } else {
+      this.lugaresService.activarLugar(loc.id).subscribe(() => {
+        const i = this.locations.findIndex(l => l.id === loc.id);
+        if (i !== -1) this.locations[i] = { ...this.locations[i], activo: true };
+        this.locations = [...this.locations];
+        this.cerrarConfirm();
+      });
     }
   }
 }

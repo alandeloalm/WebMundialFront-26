@@ -16,5 +16,34 @@
 }
 
 #mapContainer {
-  filter: grayscale(0.2) contrast(1.1); /* Toque estético opcional */
+  filter: grayscale(0.2) contrast(1.1); 
+}
+
+.backdrop-dark-overlay {
+  background-color: rgba(0, 0, 0, 0.75);
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+}
+
+.animate-in {
+  animation-duration: 0.2s;
+  animation-fill-mode: forwards;
+}
+
+.zoom-in-95 {
+  animation-name: zoomIn;
+}
+
+@keyframes zoomIn {
+  from { transform: scale(0.95); opacity: 0; }
+  to { transform: scale(1); opacity: 1; }
+}
+
+.fade-in {
+  animation-name: fadeIn;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
 }
