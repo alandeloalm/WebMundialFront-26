@@ -1,0 +1,140 @@
+@if (loading()) {
+  <div class="flex items-center justify-center h-64">
+    <div class="w-8 h-8 border-2 border-border border-t-foreground rounded-full animate-spin"></div>
+  </div>
+}
+@else if (error()) {
+  <div class="flex flex-col items-center justify-center h-64 gap-3 text-muted-foreground">
+    <lucide-icon name="circle-alert" class="w-8 h-8"></lucide-icon>
+    <p class="text-sm">No se pudieron cargar los datos</p>
+  </div>
+}
+@else if (data()) {
+
+  <!-- KPI -->
+  <div class="grid sm:grid-cols-3 gap-4 mb-6">
+    <div class="rounded-xl border border-border bg-card p-5 shadow-card">
+      <lucide-icon name="ticket" class="w-5 h-5 text-muted-foreground mb-3"></lucide-icon>
+      <p class="text-3xl font-display font-bold text-foreground">{{ data()!.total_canjeados | number }}</p>
+      <p class="text-xs text-muted-foreground mt-1">Cupones canjeados</p>
+    </div>
+    <div class="rounded-xl border border-border bg-card p-5 shadow-card">
+      <lucide-icon name="tag" class="w-5 h-5 text-muted-foreground mb-3"></lucide-icon>
+      <p class="text-3xl font-display font-bold text-foreground">{{ data()!.por_campana.length }}</p>
+      <p class="text-xs text-muted-foreground mt-1">Campañas activas</p>
+    </div>
+    <div class="rounded-xl border border-border bg-card p-5 shadow-card">
+      <lucide-icon name="trending-up" class="w-5 h-5 text-muted-foreground mb-3"></lucide-icon>
+      <p class="text-3xl font-display font-bold text-foreground">
+        {{ (data()!.por_campana[0]?.tasa_conversion ?? 0) | number:'1.0-1' }}%
+      </p>
+      <p class="text-xs text-muted-foreground mt-1">Mejor tasa de conversión</p>
+    </div>
+  </div>
+
+  <!-- Gráficas -->
+  <div class="grid lg:grid-cols-2 gap-6 mb-6">
+
+    <!-- Conversión por campaña -->
+    <div class="rounded-xl border border-border bg-card p-6 shadow-card">
+      <div class="flex items-center gap-2 mb-4">
+        <lucide-icon name="chart-column-big" class="w-4 h-4 text-muted-foreground"></lucide-icon>
+        <h3 class="font-display font-semibold text-foreground text-sm">Tasa de conversión por campaña</h3>
+      </div>
+      <canvas baseChart [data]="conversionChart" [options]="barHorizOpts" type="bar"></canvas>
+    </div>
+
+    <!-- Tipo de descuento -->
+    <div class="rounded-xl border border-border bg-card p-6 shadow-card">
+      <div class="flex items-center gap-2 mb-4">
+        <lucide-icon name="chart-pie" class="w-4 h-4 text-muted-foreground"></lucide-icon>
+        <h3 class="font-display font-semibold text-foreground text-sm">Rendimiento por tipo de descuento</h3>
+      </div>
+      <canvas baseChart [data]="tipoDescuentoChart" [options]="doughnutOpts" type="doughnut"></canvas>
+      <!-- Tabla de apoyo -->
+      <div class="mt-4 space-y-2">
+        @for (t of data()!.por_tipo_descuento; track t.tipo_descuento) {
+          <div class="flex items-center justify-between text-xs text-muted-foreground">
+            <span class="capitalize">{{ t.tipo_descuento || 'Sin tipo' }}</span>
+            <div class="flex gap-4">
+              <span>Emitidos: <strong class="text-foreground">{{ t.total_emitidos }}</strong></span>
+              <span>Conv: <strong class="text-foreground">{{ t.tasa_conversion }}%</strong></span>
+            </div>
+          </div>
+        }
+      </div>
+    </div>
+
+  </div>
+
+  <!-- Análisis Cruzado -->
+  <div class="rounded-xl border border-border bg-card p-6 shadow-card">
+    <div class="flex items-center gap-2 mb-1">
+      <lucide-icon name="layers" class="w-4 h-4 text-muted-foreground"></lucide-icon>
+      <h3 class="font-display font-semibold text-foreground text-sm">Análisis cruzado de canjes</h3>
+    </div>
+    <p class="text-xs text-muted-foreground mb-5">Filtra por perfil de usuario para ver qué comercios canjearon más</p>
+
+    <!-- Selectores -->
+    <div class="grid sm:grid-cols-3 gap-3 mb-6">
+      <div>
+        <label class="text-xs text-muted-foreground mb-1 block">Nacionalidad</label>
+        <select
+          [ngModel]="filtroCruzNac()"
+          (ngModelChange)="filtroCruzNac.set($event)"
+          class="w-full rounded-lg border border-border bg-background px-3 py-2 text-sm text-foreground focus:outline-none focus:ring-1 focus:ring-border">
+          @for (n of nacionalidades; track n) {
+            <option [value]="n">{{ n === 'todos' ? 'Todas' : n }}</option>
+          }
+        </select>
+      </div>
+      <div>
+        <label class="text-xs text-muted-foreground mb-1 block">Género</label>
+        <select
+          [ngModel]="filtroCruzGen()"
+          (ngModelChange)="filtroCruzGen.set($event)"
+          class="w-full rounded-lg border border-border bg-background px-3 py-2 text-sm text-foreground focus:outline-none focus:ring-1 focus:ring-border">
+          @for (g of generos; track g) {
+            <option [value]="g">{{ g === 'todos' ? 'Todos' : g }}</option>
+          }
+        </select>
+      </div>
+      <div>
+        <label class="text-xs text-muted-foreground mb-1 block">Rango de edad</label>
+        <select
+          [ngModel]="filtroCruzEdad()"
+          (ngModelChange)="filtroCruzEdad.set($event)"
+          class="w-full rounded-lg border border-border bg-background px-3 py-2 text-sm text-foreground focus:outline-none focus:ring-1 focus:ring-border">
+          @for (e of edades; track e) {
+            <option [value]="e">{{ e === 'todos' ? 'Todos' : e }}</option>
+          }
+        </select>
+      </div>
+    </div>
+
+    <!-- Barras resultado -->
+    @if (cruzadoArray.length === 0) {
+      <p class="text-sm text-muted-foreground text-center py-8">Sin datos para esta combinación</p>
+    } @else {
+      <div class="space-y-4">
+        @for (row of cruzadoArray; track row.comercio) {
+          <div>
+            <div class="flex items-center justify-between text-sm mb-1.5">
+              <div class="flex items-center gap-2">
+                <span class="text-foreground font-medium">{{ row.comercio }}</span>
+                <span class="text-xs text-muted-foreground bg-muted/40 px-2 py-0.5 rounded-full">{{ row.categoria }}</span>
+              </div>
+              <span class="text-muted-foreground font-medium">{{ row.canjes }}</span>
+            </div>
+            <div class="h-2 w-full rounded-full bg-slate-100 overflow-hidden">
+              <div class="h-full rounded-full bg-accent transition-all duration-700 ease-out"
+                   [style.width.%]="(row.canjes / maxCanjesCruzado) * 100">
+              </div>
+            </div>
+          </div>
+        }
+      </div>
+    }
+  </div>
+
+}

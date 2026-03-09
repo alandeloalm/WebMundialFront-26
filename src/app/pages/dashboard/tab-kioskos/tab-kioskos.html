@@ -1,0 +1,154 @@
+@if (loading()) {
+  <div class="flex items-center justify-center h-64">
+    <div class="w-8 h-8 border-2 border-border border-t-foreground rounded-full animate-spin"></div>
+  </div>
+}
+@else if (error()) {
+  <div class="flex flex-col items-center justify-center h-64 gap-3 text-muted-foreground">
+    <lucide-icon name="circle-alert" class="w-8 h-8"></lucide-icon>
+    <p class="text-sm">No se pudieron cargar los datos</p>
+  </div>
+}
+@else if (data()) {
+
+  <!-- KPI globales -->
+  <div class="grid sm:grid-cols-4 gap-4 mb-6">
+
+    <div class="rounded-xl border border-border bg-card p-5 shadow-card">
+      <lucide-icon name="mouse-pointer-click" class="w-5 h-5 text-muted-foreground mb-3"></lucide-icon>
+      <p class="text-3xl font-display font-bold text-foreground">{{ data()!.totales.total_interacciones | number }}</p>
+      <p class="text-xs text-muted-foreground mt-1">Interacciones totales</p>
+    </div>
+
+    <div class="rounded-xl border border-border bg-card p-5 shadow-card">
+      <lucide-icon name="circle-check-big" class="w-5 h-5 text-muted-foreground mb-3"></lucide-icon>
+      <p class="text-3xl font-display font-bold text-foreground">{{ data()!.totales.completaron_flujo | number }}</p>
+      <p class="text-xs text-muted-foreground mt-1">Completaron el flujo</p>
+    </div>
+
+    <div class="rounded-xl border border-border bg-card p-5 shadow-card">
+      <lucide-icon name="circle-x" class="w-5 h-5 text-muted-foreground mb-3"></lucide-icon>
+      <p class="text-3xl font-display font-bold text-foreground">{{ data()!.totales.no_completaron | number }}</p>
+      <p class="text-xs text-muted-foreground mt-1">Sin iniciar sesión</p>
+    </div>
+
+    <div class="rounded-xl border border-border bg-card p-5 shadow-card">
+      <lucide-icon name="percent" class="w-5 h-5 text-muted-foreground mb-3"></lucide-icon>
+      <p class="text-3xl font-display font-bold text-foreground">{{ data()!.totales.pct_completaron | number:'1.0-1' }}%</p>
+      <p class="text-xs text-muted-foreground mt-1">Tasa de completación</p>
+    </div>
+
+  </div>
+
+  <!-- Barra flujo global -->
+  <div class="rounded-xl border border-border bg-card p-5 shadow-card mb-6">
+    <p class="text-sm font-medium text-foreground mb-3">Flujo completo vs sin sesión</p>
+    <div class="h-3 w-full rounded-full bg-slate-100 overflow-hidden flex">
+      <div class="h-full bg-accent transition-all duration-1000 ease-out"
+           [style.width.%]="data()!.totales.pct_completaron">
+      </div>
+      <div class="h-full bg-secondary/40 transition-all duration-1000 ease-out"
+           [style.width.%]="100 - data()!.totales.pct_completaron">
+      </div>
+    </div>
+    <div class="flex gap-4 mt-2">
+      <span class="flex items-center gap-1.5 text-xs text-muted-foreground">
+        <span class="w-2 h-2 rounded-full bg-accent inline-block"></span>
+        Completaron {{ data()!.totales.pct_completaron | number:'1.0-1' }}%
+      </span>
+      <span class="flex items-center gap-1.5 text-xs text-muted-foreground">
+        <span class="w-2 h-2 rounded-full bg-secondary/60 inline-block"></span>
+        Sin sesión {{ (100 - data()!.totales.pct_completaron) | number:'1.0-1' }}%
+      </span>
+    </div>
+  </div>
+
+  <!-- Sesiones por kiosco (chart) + QR scans -->
+  <div class="grid lg:grid-cols-2 gap-6 mb-6">
+
+    <!-- Chart sesiones -->
+    <div class="rounded-xl border border-border bg-card p-6 shadow-card">
+      <div class="flex items-center gap-2 mb-4">
+        <lucide-icon name="monitor" class="w-4 h-4 text-muted-foreground"></lucide-icon>
+        <h3 class="font-display font-semibold text-foreground text-sm">Con sesión vs sin sesión por kiosco</h3>
+      </div>
+      <canvas baseChart [data]="sesionesChart" [options]="sesionesOpts" type="bar"></canvas>
+    </div>
+
+    <!-- QR Scans ranking -->
+    <div class="rounded-xl border border-border bg-card p-6 shadow-card">
+      <div class="flex items-center gap-2 mb-5">
+        <lucide-icon name="qr-code" class="w-4 h-4 text-muted-foreground"></lucide-icon>
+        <h3 class="font-display font-semibold text-foreground text-sm">Escaneos QR por kiosco</h3>
+      </div>
+      <div class="space-y-4">
+        @for (k of data()!.qr_scans; track k.nombre) {
+          <div>
+            <div class="flex items-center justify-between text-sm mb-1.5">
+              <div>
+                <span class="text-foreground font-medium">{{ k.nombre }}</span>
+                @if (k.ubicacion) {
+                  <span class="text-xs text-muted-foreground ml-2">{{ k.ubicacion }}</span>
+                }
+              </div>
+              <div class="flex gap-3 text-xs text-muted-foreground">
+                <span>{{ k.escaneos_qr }} QRs</span>
+                <span>{{ k.usuarios_unicos }} únicos</span>
+              </div>
+            </div>
+            <div class="h-2 w-full rounded-full bg-slate-100 overflow-hidden">
+              <div class="h-full rounded-full gradient-gold transition-all duration-700 ease-out"
+                   [style.width.%]="(k.escaneos_qr / maxQR) * 100">
+              </div>
+            </div>
+          </div>
+        }
+      </div>
+    </div>
+
+  </div>
+
+  <!-- Tabla detalle por kiosco -->
+  <div class="rounded-xl border border-border bg-card p-6 shadow-card overflow-x-auto">
+    <div class="flex items-center gap-2 mb-5">
+      <lucide-icon name="table" class="w-4 h-4 text-muted-foreground"></lucide-icon>
+      <h3 class="font-display font-semibold text-foreground text-sm">Detalle por kiosco</h3>
+    </div>
+    <table class="w-full text-sm">
+      <thead>
+        <tr class="border-b border-border">
+          <th class="text-left text-xs text-muted-foreground font-medium pb-3 pr-4">Kiosco</th>
+          <th class="text-right text-xs text-muted-foreground font-medium pb-3 px-4">Interacciones</th>
+          <th class="text-right text-xs text-muted-foreground font-medium pb-3 px-4">Con sesión</th>
+          <th class="text-right text-xs text-muted-foreground font-medium pb-3 px-4">Sin sesión</th>
+          <th class="text-right text-xs text-muted-foreground font-medium pb-3 px-4">% sin sesión</th>
+          <th class="text-right text-xs text-muted-foreground font-medium pb-3 pl-4">Con video</th>
+        </tr>
+      </thead>
+      <tbody>
+        @for (k of data()!.por_kiosko; track k.id) {
+          <tr class="border-b border-border/50 hover:bg-muted/20 transition-colors">
+            <td class="py-3 pr-4">
+              <p class="text-foreground font-medium">{{ k.nombre }}</p>
+              @if (k.lugar) {
+                <p class="text-xs text-muted-foreground">{{ k.lugar }}</p>
+              }
+            </td>
+            <td class="py-3 px-4 text-right text-foreground">{{ k.total_interacciones | number }}</td>
+            <td class="py-3 px-4 text-right text-accent font-medium">{{ k.con_sesion | number }}</td>
+            <td class="py-3 px-4 text-right text-secondary font-medium">{{ k.sin_sesion | number }}</td>
+            <td class="py-3 px-4 text-right">
+              <span [class]="k.pct_sin_sesion > 50
+                ? 'text-secondary font-medium'
+                : 'text-muted-foreground'">
+                {{ k.pct_sin_sesion | number:'1.0-1' }}%
+              </span>
+            </td>
+            <td class="py-3 pl-4 text-right text-muted-foreground">{{ k.con_video | number }}</td>
+          </tr>
+        }
+      </tbody>
+    </table>
+  </div>
+
+}

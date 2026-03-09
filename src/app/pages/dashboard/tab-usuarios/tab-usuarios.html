@@ -1,0 +1,103 @@
+<!-- Loading -->
+@if (loading()) {
+  <div class="flex items-center justify-center h-64">
+    <div class="w-8 h-8 border-2 border-border border-t-foreground rounded-full animate-spin"></div>
+  </div>
+}
+
+<!-- Error -->
+@else if (error()) {
+  <div class="flex flex-col items-center justify-center h-64 gap-3 text-muted-foreground">
+    <lucide-icon name="circle-alert" class="w-8 h-8"></lucide-icon>
+    <p class="text-sm">No se pudieron cargar los datos</p>
+  </div>
+}
+
+@else if (data()) {
+  <!-- KPI Cards -->
+  <div class="grid sm:grid-cols-3 gap-4 mb-6">
+
+    <div class="rounded-xl border border-border bg-card p-5 shadow-card">
+      <div class="flex items-center justify-between mb-3">
+        <lucide-icon name="users" class="w-5 h-5 text-muted-foreground"></lucide-icon>
+        <span class="text-xs text-muted-foreground uppercase tracking-wide">Total</span>
+      </div>
+      <p class="text-3xl font-display font-bold text-foreground">{{ data()!.total_usuarios | number }}</p>
+      <p class="text-xs text-muted-foreground mt-1">Usuarios registrados</p>
+    </div>
+
+    <div class="rounded-xl border border-border bg-card p-5 shadow-card">
+      <div class="flex items-center justify-between mb-3">
+        <lucide-icon name="activity" class="w-5 h-5 text-muted-foreground"></lucide-icon>
+        <span class="text-xs font-medium text-accent">Activos</span>
+      </div>
+      <p class="text-3xl font-display font-bold text-foreground">{{ data()!.activos | number }}</p>
+      <p class="text-xs text-muted-foreground mt-1">Último acceso &lt; 7 días</p>
+    </div>
+
+    <div class="rounded-xl border border-border bg-card p-5 shadow-card">
+      <div class="flex items-center justify-between mb-3">
+        <lucide-icon name="user-x" class="w-5 h-5 text-muted-foreground"></lucide-icon>
+        <span class="text-xs font-medium text-secondary">Inactivos</span>
+      </div>
+      <p class="text-3xl font-display font-bold text-foreground">{{ data()!.inactivos | number }}</p>
+      <p class="text-xs text-muted-foreground mt-1">Sin acceso en 7+ días</p>
+    </div>
+
+  </div>
+
+  <!-- Activos vs Inactivos barra de progreso -->
+  <div class="rounded-xl border border-border bg-card p-5 shadow-card mb-6">
+    <p class="text-sm font-medium text-foreground mb-3">Ratio activos / inactivos</p>
+    <div class="h-3 w-full rounded-full bg-slate-100 overflow-hidden flex">
+      <div class="h-full bg-accent transition-all duration-1000 ease-out"
+           [style.width.%]="(data()!.activos / data()!.total_usuarios) * 100">
+      </div>
+      <div class="h-full bg-secondary/40 transition-all duration-1000 ease-out"
+           [style.width.%]="(data()!.inactivos / data()!.total_usuarios) * 100">
+      </div>
+    </div>
+    <div class="flex gap-4 mt-2">
+      <span class="flex items-center gap-1.5 text-xs text-muted-foreground">
+        <span class="w-2 h-2 rounded-full bg-accent inline-block"></span>
+        Activos {{ (data()!.activos / data()!.total_usuarios * 100) | number:'1.0-1' }}%
+      </span>
+      <span class="flex items-center gap-1.5 text-xs text-muted-foreground">
+        <span class="w-2 h-2 rounded-full bg-secondary/60 inline-block"></span>
+        Inactivos {{ (data()!.inactivos / data()!.total_usuarios * 100) | number:'1.0-1' }}%
+      </span>
+    </div>
+  </div>
+
+  <!-- Charts grid -->
+  <div class="grid lg:grid-cols-3 gap-6">
+
+    <!-- Nacionalidad -->
+    <div class="rounded-xl border border-border bg-card p-6 shadow-card">
+      <div class="flex items-center gap-2 mb-4">
+        <lucide-icon name="globe" class="w-4 h-4 text-muted-foreground"></lucide-icon>
+        <h3 class="font-display font-semibold text-foreground text-sm">Por nacionalidad</h3>
+      </div>
+      <canvas baseChart [data]="nacionalidadChart" [options]="doughnutOpts" type="doughnut"></canvas>
+    </div>
+
+    <!-- Género -->
+    <div class="rounded-xl border border-border bg-card p-6 shadow-card">
+      <div class="flex items-center gap-2 mb-4">
+        <lucide-icon name="chart-column-big" class="w-4 h-4 text-muted-foreground"></lucide-icon>
+        <h3 class="font-display font-semibold text-foreground text-sm">Por género</h3>
+      </div>
+      <canvas baseChart [data]="generoChart" [options]="barHorizOpts" type="bar"></canvas>
+    </div>
+
+    <!-- Edad -->
+    <div class="rounded-xl border border-border bg-card p-6 shadow-card">
+      <div class="flex items-center gap-2 mb-4">
+        <lucide-icon name="chart-column" class="w-4 h-4 text-muted-foreground"></lucide-icon>
+        <h3 class="font-display font-semibold text-foreground text-sm">Por rango de edad</h3>
+      </div>
+      <canvas baseChart [data]="edadChart" [options]="barVertOpts" type="bar"></canvas>
+    </div>
+
+  </div>
+}

@@ -11,15 +11,18 @@ import {
   MapPin, Bus, Utensils, Library, Play, Tag, Gift,
   ChevronDown, Copy, Clock, ShieldCheck, CircleAlert, LoaderCircle,
   Eye, EyeOff, Loader, Store, Plus, Pencil, Trash2, LayoutGrid,
-  ImagePlus
+  ImagePlus, Monitor, UserX, ChartColumnBig, ChartColumn, Ticket,
+  TrendingUp, ChartPie, Layers, Percent, Award, MousePointerClick,
+  CircleCheckBig, CircleX, Table
 } from 'lucide-angular';
+import { provideCharts, withDefaultRegisterables } from 'ng2-charts';
 
 export const appConfig: ApplicationConfig = {
   providers: [
     provideBrowserGlobalErrorListeners(),
     provideRouter(routes, withViewTransitions()),
     provideHttpClient(withInterceptors([authInterceptor])),
-
+    provideCharts(withDefaultRegisterables()),
     importProvidersFrom(
       LucideAngularModule.pick({ 
         Mail, Lock, User, ChevronRight, Globe, Calendar, Phone,
@@ -27,7 +30,10 @@ export const appConfig: ApplicationConfig = {
         Users, Activity, BarChart3, MapPin, Bus, Utensils, Library,
         Play, Tag, Gift, ChevronDown, Copy, Clock, ShieldCheck,
         CircleAlert, LoaderCircle, Eye, EyeOff, Loader, Store, Plus,
-        Pencil, Trash2, LayoutGrid, ImagePlus
+        Pencil, Trash2, LayoutGrid, ImagePlus, Monitor, UserX, ChartColumnBig,
+        ChartColumn, Ticket, TrendingUp, ChartPie, Layers, Percent, Award,
+        MousePointerClick, CircleCheckBig, CircleX, Table
+
       })
     )
   ]

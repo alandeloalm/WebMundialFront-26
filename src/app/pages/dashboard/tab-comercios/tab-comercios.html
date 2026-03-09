@@ -1,0 +1,87 @@
+@if (loading()) {
+  <div class="flex items-center justify-center h-64">
+    <div class="w-8 h-8 border-2 border-border border-t-foreground rounded-full animate-spin"></div>
+  </div>
+}
+@else if (error()) {
+  <div class="flex flex-col items-center justify-center h-64 gap-3 text-muted-foreground">
+    <lucide-icon name="circle-alert" class="w-8 h-8"></lucide-icon>
+    <p class="text-sm">No se pudieron cargar los datos</p>
+  </div>
+}
+@else if (data()) {
+
+  <!-- KPI -->
+  <div class="grid sm:grid-cols-3 gap-4 mb-6">
+    <div class="rounded-xl border border-border bg-card p-5 shadow-card">
+      <lucide-icon name="store" class="w-5 h-5 text-muted-foreground mb-3"></lucide-icon>
+      <p class="text-3xl font-display font-bold text-foreground">{{ data()!.ranking.length }}</p>
+      <p class="text-xs text-muted-foreground mt-1">Comercios activos</p>
+    </div>
+    <div class="rounded-xl border border-border bg-card p-5 shadow-card">
+      <lucide-icon name="trophy" class="w-5 h-5 text-muted-foreground mb-3"></lucide-icon>
+      <p class="text-3xl font-display font-bold text-foreground truncate">{{ data()!.ranking[0]?.nombre ?? '—' }}</p>
+      <p class="text-xs text-muted-foreground mt-1">Comercio líder en canjes</p>
+    </div>
+    <div class="rounded-xl border border-border bg-card p-5 shadow-card">
+      <lucide-icon name="percent" class="w-5 h-5 text-muted-foreground mb-3"></lucide-icon>
+      <p class="text-3xl font-display font-bold text-foreground">{{ data()!.roi[0]?.roi_pct | number:'1.0-1' }}%</p>
+      <p class="text-xs text-muted-foreground mt-1">Mejor ROI</p>
+    </div>
+  </div>
+
+  <!-- Ranking + ROI -->
+  <div class="grid lg:grid-cols-2 gap-6 mb-6">
+
+    <!-- Ranking por canjes -->
+    <div class="rounded-xl border border-border bg-card p-6 shadow-card">
+      <div class="flex items-center gap-2 mb-5">
+        <lucide-icon name="award" class="w-4 h-4 text-muted-foreground"></lucide-icon>
+        <h3 class="font-display font-semibold text-foreground text-sm">Ranking por cupones canjeados</h3>
+      </div>
+      <div class="space-y-4">
+        @for (comercio of data()!.ranking.slice(0, 8); track comercio.id; let i = $index) {
+          <div>
+            <div class="flex items-center justify-between text-sm mb-1.5">
+              <div class="flex items-center gap-2">
+                <span class="text-xs font-bold text-muted-foreground w-5">#{{ i + 1 }}</span>
+                <span class="text-foreground font-medium">{{ comercio.nombre }}</span>
+                <span class="text-xs text-muted-foreground bg-muted/40 px-1.5 py-0.5 rounded-full">{{ comercio.categoria }}</span>
+              </div>
+              <div class="flex gap-3 text-xs text-muted-foreground">
+                <span>{{ comercio.total_canjeados }} canjes</span>
+                <span>{{ comercio.usuarios_unicos }} usuarios</span>
+              </div>
+            </div>
+            <div class="h-2 w-full rounded-full bg-slate-100 overflow-hidden">
+              <div class="h-full rounded-full gradient-coral transition-all duration-700 ease-out"
+                   [style.width.%]="(comercio.total_canjeados / maxCanjes) * 100">
+              </div>
+            </div>
+          </div>
+        }
+      </div>
+    </div>
+
+    <!-- ROI -->
+    <div class="rounded-xl border border-border bg-card p-6 shadow-card">
+      <div class="flex items-center gap-2 mb-4">
+        <lucide-icon name="trending-up" class="w-4 h-4 text-muted-foreground"></lucide-icon>
+        <h3 class="font-display font-semibold text-foreground text-sm">ROI por comercio</h3>
+      </div>
+      <canvas baseChart [data]="roiChart" [options]="roiOpts" type="bar"></canvas>
+    </div>
+
+  </div>
+
+  <!-- Heatmap horas pico -->
+  <div class="rounded-xl border border-border bg-card p-6 shadow-card">
+    <div class="flex items-center gap-2 mb-1">
+      <lucide-icon name="clock" class="w-4 h-4 text-muted-foreground"></lucide-icon>
+      <h3 class="font-display font-semibold text-foreground text-sm">Horas pico de canje por comercio</h3>
+    </div>
+    <p class="text-xs text-muted-foreground mb-5">Top 5 comercios · canjes por hora del día</p>
+    <canvas baseChart [data]="horasPicoChart" [options]="horasPicoOpts" type="bar"></canvas>
+  </div>
+
+}

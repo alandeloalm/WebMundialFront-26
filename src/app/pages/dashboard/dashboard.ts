@@ -1,29 +1,37 @@
-import { Component } from '@angular/core';
+import { Component, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { LucideAngularModule } from 'lucide-angular';
+import { TabUsuarios } from './tab-usuarios/tab-usuarios';
+import { TabCampanas } from './tab-campanas/tab-campanas';
+import { TabComercios } from './tab-comercios/tab-comercios';
+import { TabKioskos } from './tab-kioskos/tab-kioskos';
+import { type Filtro }   from '../../core/services/dashboard.service';
+
+type Tab = 'usuarios' | 'campanas' | 'comercios' | 'kioskos';
 
 @Component({
   selector: 'app-dashboard',
   standalone: true,
-  imports: [CommonModule, LucideAngularModule],
+  imports: [CommonModule, LucideAngularModule, TabUsuarios, TabCampanas, TabComercios, TabKioskos],
   templateUrl: './dashboard.html',
 })
 export class Dashboard {
-  stats = [
-    { label: "Usuarios registrados", value: "1,247", change: "+12%", icon: 'users' },
-    { label: "Bailes completados", value: "834", change: "+8%", icon: 'activity' },
-    { label: "Sin sesión", value: "213", change: "-3%", icon: 'qr-code' },
-    { label: "Cupones reclamados", value: "456", change: "+15%", icon: 'trophy' },
+  activeTab  = signal<Tab>('usuarios');
+  filtro     = signal<Filtro>('total');
+
+  tabs: { id: Tab; label: string; icon: string }[] = [
+    { id: 'usuarios',  label: 'Usuarios',  icon: 'users' },
+    { id: 'campanas',  label: 'Campañas',  icon: 'tag' },
+    { id: 'comercios', label: 'Comercios', icon: 'store' },
+    { id: 'kioskos',   label: 'Kioskos',   icon: 'monitor' },
   ];
 
-  kioskMetrics = [
-    { name: "Barrio Antiguo", sessions: 312, completion: 89 },
-    { name: "Macroplaza", sessions: 245, completion: 76 },
-    { name: "Fundidora", sessions: 178, completion: 82 },
-    { name: "Santa Lucía", sessions: 99, completion: 91 },
+  filtros: { id: Filtro; label: string }[] = [
+    { id: 'semana', label: 'Semana' },
+    { id: 'mes',    label: 'Mes' },
+    { id: 'total',  label: 'Total' },
   ];
 
-  get maxSessions(): number {
-    return Math.max(...this.kioskMetrics.map(k => k.sessions), 1);
-  }
+  setTab(tab: Tab)      { this.activeTab.set(tab); }
+  setFiltro(f: Filtro)  { this.filtro.set(f); }
 }
