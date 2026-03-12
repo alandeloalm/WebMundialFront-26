@@ -4,11 +4,12 @@ import { Footer } from './features/footer/footer';
 import { Navbar } from './features/navbar/navbar';
 import { AuthService } from './core/auth/auth.service';
 import { NgxSonnerToaster } from 'ngx-sonner';
+import { Chatbot } from './features/chatbot/chatbot';
 
 @Component({
   selector: 'app-root',
   standalone: true,
-  imports: [RouterOutlet, Navbar, NgxSonnerToaster],
+  imports: [RouterOutlet, Navbar, NgxSonnerToaster, Chatbot],
   templateUrl: './app.html',
   styleUrl: './app.css'
 })
