@@ -21,7 +21,7 @@ export const routes: Routes = [
       if (auth.isLoggedIn() && auth.perfilCompleto()) {
         return router.createUrlTree(['/recompensas']);
       }
-      return router.createUrlTree(['/mapa']);
+      return router.createUrlTree(['/login']);
     }],
     component: Mapa,
   },
