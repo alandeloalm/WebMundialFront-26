@@ -1,4 +1,9 @@
-const { writeFileSync } = require('fs');
+const { writeFileSync, mkdirSync, existsSync } = require('fs');
+
+const dir = './src/environments';
+if (!existsSync(dir)) {
+  mkdirSync(dir, { recursive: true });
+}
 
 const apiUrl = process.env.API_URL || 'https://webmundialback-26.onrender.com/api';
 const mapsKey = process.env.GOOGLE_MAPS_KEY || '';
