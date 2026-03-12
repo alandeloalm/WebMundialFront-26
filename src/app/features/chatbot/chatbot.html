@@ -1,22 +1,25 @@
-<!-- src/app/features/chatbot/chatbot.component.html -->
+<!-- src/app/features/chatbot/chatbot.html -->
+
+@if (auth.isLoggedIn() && auth.perfilCompleto()) {
 
 <!-- ── FAB ─────────────────────────────────────────────────────────── -->
 <button
   (click)="toggleChat()"
   [class]="abierto()
-    ? 'fixed bottom-7 right-7 z-50 w-16 h-16 rounded-full flex items-center justify-center border-none cursor-pointer gradient-coral shadow-elevated transition-all duration-300'
-    : 'fixed bottom-7 right-7 z-50 w-16 h-16 rounded-full flex items-center justify-center border-none cursor-pointer gradient-hero shadow-elevated transition-all duration-300 hover:scale-110'"
+    ? 'fixed bottom-4 right-4 sm:bottom-7 sm:right-7 z-50 w-14 h-14 sm:w-16 sm:h-16 rounded-full flex items-center justify-center border-none cursor-pointer gradient-coral shadow-elevated transition-all duration-300'
+    : 'fixed bottom-4 right-4 sm:bottom-7 sm:right-7 z-50 w-14 h-14 sm:w-16 sm:h-16 rounded-full flex items-center justify-center border-none cursor-pointer gradient-hero shadow-elevated transition-all duration-300 hover:scale-110'"
   aria-label="Abrir asistente"
 >
+  <!-- Avatar imagen cuando está cerrado -->
   <div
-    class="relative w-9 h-9 transition-all duration-200"
+    class="absolute inset-0 rounded-full overflow-hidden transition-all duration-200"
     [class.opacity-0]="abierto()"
     [class.scale-75]="abierto()"
   >
-    <span class="absolute top-0 left-0 text-2xl leading-none">🐷</span>
-    <span class="absolute top-3 left-3 text-lg leading-none opacity-60">🍝</span>
+    <img src="avatar.png" alt="Asistente" class="w-full h-full object-cover" />
   </div>
 
+  <!-- X cuando está abierto -->
   <span
     class="absolute text-white font-bold text-lg transition-all duration-200"
     [class.opacity-0]="!abierto()"
@@ -32,7 +35,7 @@
   [class]="abierto()
     ? 'opacity-100 translate-y-0 scale-100 pointer-events-auto'
     : 'opacity-0 translate-y-4 scale-95 pointer-events-none'"
-  style="bottom:108px; right:28px; width:375px; max-width:calc(100vw - 32px); max-height:620px;"
+  style="bottom:100px; right:16px; width:min(375px, calc(100vw - 32px)); max-height:min(620px, calc(100dvh - 110px));"
 >
 
   <!-- Header -->
@@ -76,10 +79,9 @@
 
       @if (msg.role === 'bot') {
         <div class="flex items-end gap-2">
-          <!-- Avatar -->
           <div class="w-8 h-8 rounded-full bg-primary border-2 border-border flex items-center justify-center text-sm flex-shrink-0 overflow-hidden">
-            @if (msg.avatarInfo?.imagen) {
-              <img [src]="msg.avatarInfo!.imagen" [alt]="msg.avatarInfo!.nombre" class="w-full h-full object-cover" />
+            @if (avatarImagen(msg.avatarInfo?.nombre)) {
+              <img [src]="avatarImagen(msg.avatarInfo?.nombre)" .../>
             } @else {
               <span>{{ msg.avatarInfo?.emoji || '⚽' }}</span>
             }
@@ -92,7 +94,6 @@
               </span>
             }
 
-            <!-- Burbuja -->
             <div class="bg-white border border-border rounded-2xl rounded-bl-sm px-3.5 py-2.5 text-[13.5px] leading-relaxed text-foreground shadow-card">
               @if (msg.loading) {
                 <div class="flex gap-1 items-center py-0.5">
@@ -105,7 +106,6 @@
               }
             </div>
 
-            <!-- Cards partidos -->
             @if (msg.partidos?.length) {
               <div class="flex flex-col gap-2 mt-1">
                 @for (p of msg.partidos; track p.numero_partido) {
@@ -114,9 +114,9 @@
                       {{ p.fase }}{{ p.grupo ? ' · Grupo ' + p.grupo : '' }}
                     </span>
                     <div class="flex items-center gap-2 my-1.5">
-                      <span class="flex-1 text-[12.5px] font-bold text-primary text-display">{{ p.equipo_local }}</span>
+                      <span class="flex-1 text-[11px] font-bold text-primary text-display truncate" [title]="p.equipo_local">{{ p.equipo_local }}</span>
                       <span class="text-[10px] font-black text-white bg-secondary px-1.5 py-0.5 rounded flex-shrink-0">VS</span>
-                      <span class="flex-1 text-[12.5px] font-bold text-primary text-display text-right">{{ p.equipo_visitante }}</span>
+                      <span class="flex-1 text-[11px] font-bold text-primary text-display text-right truncate" [title]="p.equipo_visitante">{{ p.equipo_visitante }}</span>
                     </div>
                     <div class="flex flex-wrap gap-2 text-[11px] text-muted-foreground">
                       <span>📅 {{ p.fecha_display }}</span>
@@ -128,7 +128,6 @@
               </div>
             }
 
-            <!-- Cards lugares -->
             @if (msg.lugares?.length) {
               <div class="flex flex-col gap-2 mt-1">
                 @for (l of msg.lugares; track l.id) {
@@ -156,7 +155,6 @@
                 }
               </div>
             }
-
           </div>
         </div>
       }
@@ -189,8 +187,8 @@
   <div class="flex items-end gap-2 px-3 py-2.5 bg-white border-t border-border flex-shrink-0">
     <textarea
       #inputEl
-      [value]="inputMensaje()"
-      (input)="onInputChange($event)"
+      [value]="inputTexto()"
+      (input)="onInput($event)"
       (keydown)="onKeyDown($event)"
       placeholder="Escribe tu pregunta..."
       rows="1"
@@ -200,7 +198,7 @@
 
     <button
       (click)="enviarMensaje()"
-      [disabled]="enviarDeshabilitado()"
+      [disabled]="sendDisabled()"
       class="w-10 h-10 rounded-xl gradient-coral text-white flex items-center justify-center border-none cursor-pointer flex-shrink-0 transition-all hover:scale-105 active:scale-95 disabled:opacity-40 disabled:cursor-not-allowed disabled:scale-100 shadow-card"
     >
       @if (!cargando()) {
@@ -218,3 +216,5 @@
   </div>
 
 </div>
+
+}

@@ -1,8 +1,7 @@
-import { Component, inject, signal } from '@angular/core';
+import { Component, signal } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
 import { Footer } from './features/footer/footer';
 import { Navbar } from './features/navbar/navbar';
-import { AuthService } from './core/auth/auth.service';
 import { NgxSonnerToaster } from 'ngx-sonner';
 import { Chatbot } from './features/chatbot/chatbot';
 
@@ -15,5 +14,4 @@ import { Chatbot } from './features/chatbot/chatbot';
 })
 export class App {
   protected readonly title = signal('WebMundial26');
-  public auth = inject(AuthService);
 }
