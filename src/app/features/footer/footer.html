@@ -1,1 +1,101 @@
-<p>footer works!</p>
+@if (auth.isLoggedIn() && auth.perfilCompleto()) {
+
+<footer class="bg-primary text-white relative overflow-hidden mt-auto">
+
+  <div class="h-[3px] gradient-coral"></div>
+
+  <div class="absolute inset-0 pointer-events-none">
+    <div class="absolute top-0 left-0 w-96 h-96 rounded-full bg-secondary/5 -translate-x-1/2 -translate-y-1/2 blur-3xl"></div>
+    <div class="absolute bottom-0 right-0 w-96 h-96 rounded-full bg-secondary/5 translate-x-1/2 translate-y-1/2 blur-3xl"></div>
+  </div>
+
+  <div class="relative max-w-7xl mx-auto px-6 py-12 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-10">
+
+    <div class="flex flex-col gap-4 sm:col-span-2 lg:col-span-1">
+      <div class="flex items-center gap-2.5">
+        <div class="w-9 h-9 rounded-lg gradient-coral flex items-center justify-center font-bold text-lg text-white flex-shrink-0">
+          W
+        </div>
+        <span class="text-xl font-bold tracking-tight">Woohoo!</span>
+      </div>
+
+      <p class="text-sm text-white/50 leading-relaxed">
+        Tu guía oficial para vivir el<br/>
+        <span class="text-white/80 font-semibold">Mundial FIFA 2026</span> desde Monterrey 🏆
+      </p>
+
+      <div class="flex flex-wrap gap-2">
+        <span class="text-[11px] font-semibold px-3 py-1 rounded-full border border-white/15 text-white/50 bg-white/5">
+          ⚽ FIFA World Cup 2026
+        </span>
+        <span class="text-[11px] font-semibold px-3 py-1 rounded-full border border-white/15 text-white/50 bg-white/5">
+          📍 Monterrey, México
+        </span>
+      </div>
+    </div>
+
+    <div class="flex flex-col gap-4">
+      <h4 class="text-[11px] font-bold uppercase tracking-widest text-secondary">Sobre Woohoo!</h4>
+      <ul class="flex flex-col gap-2.5">
+        <li><a href="#" class="text-[13px] text-white/50 hover:text-white transition-colors">¿Qué es Woohoo!?</a></li>
+        <li><a href="#" class="text-[13px] text-white/50 hover:text-white transition-colors">Nuestro equipo</a></li>
+        <li><a href="#" class="text-[13px] text-white/50 hover:text-white transition-colors">Cómo funciona</a></li>
+        <li><a href="#" class="text-[13px] text-white/50 hover:text-white transition-colors">Preguntas frecuentes</a></li>
+      </ul>
+    </div>
+
+    <div class="flex flex-col gap-4">
+      <h4 class="text-[11px] font-bold uppercase tracking-widest text-secondary">Legal</h4>
+      <ul class="flex flex-col gap-2.5">
+        <li><a href="#" class="text-[13px] text-white/50 hover:text-white transition-colors">Términos y condiciones</a></li>
+        <li><a href="#" class="text-[13px] text-white/50 hover:text-white transition-colors">Aviso de privacidad</a></li>
+        <li><a href="#" class="text-[13px] text-white/50 hover:text-white transition-colors">Política de cookies</a></li>
+        <li><a href="#" class="text-[13px] text-white/50 hover:text-white transition-colors">Uso de datos</a></li>
+      </ul>
+    </div>
+
+    <div class="flex flex-col gap-4">
+      <h4 class="text-[11px] font-bold uppercase tracking-widest text-secondary">Contacto</h4>
+      <ul class="flex flex-col gap-2.5">
+        <li><a href="#" class="text-[13px] text-white/50 hover:text-white transition-colors">soporte&#64;woohoo.mx</a></li>
+        <li><a href="#" class="text-[13px] text-white/50 hover:text-white transition-colors">Centro de ayuda</a></li>
+        <li><a href="#" class="text-[13px] text-white/50 hover:text-white transition-colors">Reportar un problema</a></li>
+      </ul>
+
+      <div class="flex gap-2 mt-1">
+        <a href="#" aria-label="Instagram"
+           class="w-9 h-9 rounded-lg border border-white/15 bg-white/5 flex items-center justify-center text-white/50 hover:text-white hover:border-secondary hover:bg-secondary/15 transition-all">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <rect x="2" y="2" width="20" height="20" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r="0.5" fill="currentColor"/>
+          </svg>
+        </a>
+        <a href="#" aria-label="Twitter"
+           class="w-9 h-9 rounded-lg border border-white/15 bg-white/5 flex items-center justify-center text-white/50 hover:text-white hover:border-secondary hover:bg-secondary/15 transition-all">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor">
+            <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/>
+          </svg>
+        </a>
+        <a href="#" aria-label="Facebook"
+           class="w-9 h-9 rounded-lg border border-white/15 bg-white/5 flex items-center justify-center text-white/50 hover:text-white hover:border-secondary hover:bg-secondary/15 transition-all">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+            <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/>
+          </svg>
+        </a>
+      </div>
+    </div>
+
+  </div>
+
+  <div class="relative border-t border-white/10">
+    <div class="max-w-7xl mx-auto px-6 py-4 flex flex-wrap items-center gap-2 text-[12px] text-white/30">
+      <span>© {{ anio }} Woohoo! — Todos los derechos reservados</span>
+      <span class="text-white/15">·</span>
+      <span>Hecho con ❤️ en Monterrey, México</span>
+      <span class="text-white/15">·</span>
+      <span>FIFA World Cup 2026™</span>
+    </div>
+  </div>
+
+</footer>
+
+}

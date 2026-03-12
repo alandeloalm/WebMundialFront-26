@@ -31,7 +31,6 @@ export class TabUsuarios {
     });
   }
 
-  // ── Chart: Nacionalidad (Doughnut) ───────────────────────────────────────
   get nacionalidadChart(): ChartData<'doughnut'> {
     const d = this.data();
     if (!d) return { labels: [], datasets: [] };
@@ -52,7 +51,6 @@ export class TabUsuarios {
     plugins: { legend: { position: 'right', labels: { font: { size: 12 }, boxWidth: 12 } } }
   };
 
-  // ── Chart: Género (Bar horizontal) ───────────────────────────────────────
   get generoChart(): ChartData<'bar'> {
     const d = this.data();
     if (!d) return { labels: [], datasets: [] };
@@ -78,7 +76,6 @@ export class TabUsuarios {
     }
   };
 
-  // ── Chart: Edad (Bar) ─────────────────────────────────────────────────────
   get edadChart(): ChartData<'bar'> {
     const d = this.data();
     if (!d) return { labels: [], datasets: [] };

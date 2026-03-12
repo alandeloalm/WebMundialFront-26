@@ -39,7 +39,6 @@ export class TabKioskos {
     return Math.max(...(this.data()?.qr_scans.map(k => k.escaneos_qr) ?? []), 1);
   }
 
-  // ── Chart: con sesión vs sin sesión por kiosco ────────────────────────────
   get sesionesChart(): ChartData<'bar'> {
     const d = this.data();
     if (!d) return { labels: [], datasets: [] };

@@ -1,11 +1,9 @@
-// src/app/core/auth/auth.service.ts
 import { Injectable, signal, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Router } from '@angular/router';
 import { Observable, tap } from 'rxjs';
 import { environment } from '../../../environments/environment';
 
-// ─── Interfaces ───────────────────────────────────────────────────────────────
 interface LoginResponse {
   mensaje: string;
   token: string;
@@ -41,14 +39,12 @@ interface CompletarPerfilResponse {
   usuario: any;
 }
 
-// ─── Servicio ─────────────────────────────────────────────────────────────────
 @Injectable({ providedIn: 'root' })
 export class AuthService {
   private router = inject(Router);
   private http = inject(HttpClient);
   private apiUrl = `${environment.apiUrl}/auth`;
 
-  // Signals — persisten la sesión leyendo localStorage al iniciar
   isLoggedIn = signal<boolean>(localStorage.getItem('is_logged') === 'true');
   userRole = signal<string | null>(this.leerDelToken('rol'));
   userName = signal<string | null>(this.leerDelToken('nombre'));
@@ -56,11 +52,10 @@ export class AuthService {
 
   constructor() {
     if (localStorage.getItem('is_logged') !== 'true') {
-      this.logout();
+      this.limpiarSesion();
     }
   }
 
-  // ─── Login con correo y contraseña ─────────────────────────────────────────
   login(correo: string, password: string): Observable<LoginResponse> {
     return this.http.post<LoginResponse>(`${this.apiUrl}/login`, { correo, password })
       .pipe(
@@ -71,15 +66,12 @@ export class AuthService {
       );
   }
 
-  // ─── Login con Google ───────────────────────────────────────────────────────
   loginConGoogle(googleToken: string): Observable<GoogleLoginResponse> {
     return this.http.post<GoogleLoginResponse>(`${this.apiUrl}/google`, { token: googleToken })
       .pipe(
         tap(response => {
           this.guardarSesion(response.token);
-
           if (response.esNuevo || !response.usuario.perfilCompleto) {
-            // Usuario nuevo de Google → debe completar su perfil primero
             this.router.navigate(['/completar-perfil']);
           } else {
             this.redirectByRole(this.userRole());
@@ -88,7 +80,6 @@ export class AuthService {
       );
   }
 
-  // ─── Registro ──────────────────────────────────────────────────────────────
   registro(datos: {
     nombre: string;
     correo: string;
@@ -101,7 +92,6 @@ export class AuthService {
     return this.http.post<RegisterResponse>(`${this.apiUrl}/registro`, datos);
   }
 
-  // ─── Completar perfil (usuarios de Google) ─────────────────────────────────
   completarPerfil(datos: {
     nacionalidad: string;
     fecha_nacimiento: string;
@@ -109,23 +99,29 @@ export class AuthService {
     genero?: string;
   }): Observable<CompletarPerfilResponse> {
     return this.http.put<CompletarPerfilResponse>(`${this.apiUrl}/completar-perfil`, datos)
-    .pipe(
-      tap((response: any) => {
-        this.guardarSesion(response.token);
-        this.redirectByRole(this.userRole());
-      })
-    );
+      .pipe(
+        tap((response: any) => {
+          this.guardarSesion(response.token);
+          this.redirectByRole(this.userRole());
+        })
+      );
   }
 
-  // ─── Helpers ───────────────────────────────────────────────────────────────
   private guardarSesion(token: string) {
     localStorage.setItem('is_logged', 'true');
     localStorage.setItem('token', token);
-  
     this.isLoggedIn.set(true);
     this.userRole.set(this.leerDelToken('rol'));
     this.userName.set(this.leerDelToken('nombre'));
     this.perfilCompleto.set(this.leerPerfilCompletoDelToken());
+  }
+
+  private limpiarSesion() {
+    localStorage.clear();
+    this.isLoggedIn.set(false);
+    this.userRole.set(null);
+    this.userName.set(null);
+    this.perfilCompleto.set(false);
   }
 
   redirectByRole(role: string | null) {
@@ -133,8 +129,7 @@ export class AuthService {
       'admin': '/dashboard',
       'user': '/recompensas'
     };
-
-    const target = routesByRole[role || ''] || '/login';
+    const target = routesByRole[role || ''] || '/mapa';
     this.router.navigate([target]);
   }
 
@@ -165,11 +160,7 @@ export class AuthService {
   }
 
   logout() {
-    localStorage.clear();
-    this.isLoggedIn.set(false);
-    this.userRole.set(null);
-    this.userName.set(null);
-    this.perfilCompleto.set(false);
+    this.limpiarSesion();
     this.router.navigate(['/login']);
   }
 }

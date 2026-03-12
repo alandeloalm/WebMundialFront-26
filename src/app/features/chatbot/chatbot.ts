@@ -1,4 +1,3 @@
-// src/app/features/chatbot/chatbot.ts
 import {
   Component,
   inject,
@@ -10,7 +9,6 @@ import {
 } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { ChatService, AvatarInfo, LugarCard, PartidoCard } from '../../core/services/chat.service';
-import { AuthService } from '../../core/auth/auth.service';
 
 export interface Mensaje {
   role: 'user' | 'bot';
@@ -39,13 +37,10 @@ function newSessionId(): string {
 })
 export class Chatbot {
   readonly #chat = inject(ChatService);
-  public auth    = inject(AuthService);
 
-  // ── refs ──────────────────────────────────────────────────────────
   readonly messagesEl = viewChild<ElementRef<HTMLElement>>('messagesEl');
   readonly inputEl    = viewChild<ElementRef<HTMLTextAreaElement>>('inputEl');
 
-  // ── state ─────────────────────────────────────────────────────────
   readonly abierto      = signal(false);
   readonly cargando     = signal(false);
   readonly inputTexto   = signal('');
@@ -53,7 +48,6 @@ export class Chatbot {
   readonly avatarActual = signal<AvatarInfo | null>(null);
   readonly sessionId    = signal<string>(newSessionId());
 
-  // ── computed ──────────────────────────────────────────────────────
   readonly mostrarSugerencias = computed(() => this.mensajes().length <= 1 && !this.cargando());
   readonly sendDisabled       = computed(() => this.cargando() || !this.inputTexto().trim());
 
@@ -64,7 +58,6 @@ export class Chatbot {
     'Números de emergencia',
   ] as const;
 
-  // ── helpers ───────────────────────────────────────────────────────
   private scrollBottom(): void {
     setTimeout(() => {
       const el = this.messagesEl()?.nativeElement;
@@ -82,7 +75,6 @@ export class Chatbot {
     this.scrollBottom();
   }
 
-  // ── acciones ──────────────────────────────────────────────────────
   toggleChat(): void {
     const opening = !this.abierto();
     this.abierto.set(opening);
@@ -120,7 +112,7 @@ export class Chatbot {
       );
       lat = pos.coords.latitude;
       lng = pos.coords.longitude;
-    } catch { /* sin ubicación */ }
+    } catch {  }
 
     this.#chat
       .enviarMensaje({ mensaje: texto, sessionId: this.sessionId(), lat, lng })
@@ -163,7 +155,6 @@ export class Chatbot {
     this.mensajes.set([{ ...BIENVENIDA }]);
   }
 
-  // ── eventos ───────────────────────────────────────────────────────
   onInput(e: Event): void {
     this.inputTexto.set((e.target as HTMLTextAreaElement).value);
   }
@@ -179,7 +170,6 @@ export class Chatbot {
     window.open(url, '_blank', 'noopener');
   }
 
-  // ── formato ───────────────────────────────────────────────────────
   formatText(t: string): string {
     return t
       .replace(/&/g, '&amp;')

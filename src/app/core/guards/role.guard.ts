@@ -1,18 +1,19 @@
 import { inject } from '@angular/core';
-import { Router, CanActivateFn } from '@angular/router';
+import { CanActivateFn, Router } from '@angular/router';
 import { AuthService } from '../auth/auth.service';
+import { toast } from 'ngx-sonner';
 
-export const roleGuard: CanActivateFn = (route) => {
-  const authService = inject(AuthService);
+export const roleGuard: CanActivateFn = () => {
+  const auth = inject(AuthService);
   const router = inject(Router);
-  
-  const expectedRole = route.data['expectedRole'];
-  const userRole = authService.userRole();
 
-  if (authService.isLoggedIn() && userRole === expectedRole) {
+  if (auth.userRole() === 'admin') {
     return true;
   }
 
-  authService.redirectByRole(userRole);
-  return false;
+  toast.error('Acceso denegado', {
+    description: 'No tienes permisos para ver esta sección.',
+  });
+
+  return router.createUrlTree(['/mapa']);
 };

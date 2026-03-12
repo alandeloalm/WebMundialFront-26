@@ -35,8 +35,6 @@ export class TabComercios {
     return Math.max(...(this.data()?.ranking.map(r => r.total_canjeados) ?? []), 1);
   }
 
-  // ── Chart: Heatmap horas pico (Bubble simulado con Bar apilado) ────────────
-  // Pivotamos: eje X = horas (0-23), una serie por comercio (top 5)
   get horasPicoChart(): ChartData<'bar'> {
     const d = this.data();
     if (!d) return { labels: [], datasets: [] };
@@ -70,7 +68,6 @@ export class TabComercios {
     }
   };
 
-  // ── Chart: ROI por comercio (Bar horizontal) ───────────────────────────────
   get roiChart(): ChartData<'bar'> {
     const d = this.data();
     if (!d) return { labels: [], datasets: [] };

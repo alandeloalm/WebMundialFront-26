@@ -1,18 +1,15 @@
-/* --- Overlay Oscuro Uniforme (Sin Blur) --- */
 .backdrop-dark-overlay {
-  background-color: rgba(0, 0, 0, 0.75); /* Oscurece el fondo igual que en tu imagen */
+  background-color: rgba(0, 0, 0, 0.75); 
   backdrop-filter: none !important;
   -webkit-backdrop-filter: none !important;
 }
 
-/* --- Contenedor Blanco del Cupón --- */
 .coupon-info-container {
-  background-color: #ffffff; /* Fondo blanco para la info */
-  border-radius: 2rem; /* Bordes muy redondeados */
+  background-color: #ffffff; 
+  border-radius: 2rem; 
   box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
 }
 
-/* --- Colores y Detalles --- */
 .text-coral-mundial {
   color: #f87171;
 }
@@ -23,11 +20,10 @@
 
 .h-px {
   height: 1px;
-  background-color: #e2e8f0; /* Color de borde estándar */
+  background-color: #e2e8f0;
   width: 100%;
 }
 
-/* --- Animaciones --- */
 .animate-fade-in-up {
   animation: fadeInUp 0.5s ease-out forwards;
 }

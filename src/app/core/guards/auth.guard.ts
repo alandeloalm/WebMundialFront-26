@@ -1,14 +1,19 @@
 import { inject } from '@angular/core';
-import { Router, CanActivateFn } from '@angular/router';
+import { CanActivateFn, Router } from '@angular/router';
 import { AuthService } from '../auth/auth.service';
+import { toast } from 'ngx-sonner';
 
 export const authGuard: CanActivateFn = () => {
-  const authService = inject(AuthService);
+  const auth = inject(AuthService);
   const router = inject(Router);
 
-  if (authService.isLoggedIn()) {
+  if (auth.isLoggedIn()) {
     return true;
   }
 
-  return router.parseUrl('/login');
+  toast.warning('Necesitas una cuenta', {
+    description: 'Inicia sesión para acceder a esta sección 🔐',
+  });
+
+  return router.createUrlTree(['/login']);
 };

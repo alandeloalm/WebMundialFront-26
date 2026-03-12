@@ -11,7 +11,6 @@
 }
 @else if (data()) {
 
-  <!-- KPI -->
   <div class="grid sm:grid-cols-3 gap-4 mb-6">
     <div class="rounded-xl border border-border bg-card p-5 shadow-card">
       <lucide-icon name="ticket" class="w-5 h-5 text-muted-foreground mb-3"></lucide-icon>
@@ -32,10 +31,8 @@
     </div>
   </div>
 
-  <!-- Gráficas -->
   <div class="grid lg:grid-cols-2 gap-6 mb-6">
 
-    <!-- Conversión por campaña -->
     <div class="rounded-xl border border-border bg-card p-6 shadow-card">
       <div class="flex items-center gap-2 mb-4">
         <lucide-icon name="chart-column-big" class="w-4 h-4 text-muted-foreground"></lucide-icon>
@@ -44,14 +41,12 @@
       <canvas baseChart [data]="conversionChart" [options]="barHorizOpts" type="bar"></canvas>
     </div>
 
-    <!-- Tipo de descuento -->
     <div class="rounded-xl border border-border bg-card p-6 shadow-card">
       <div class="flex items-center gap-2 mb-4">
         <lucide-icon name="chart-pie" class="w-4 h-4 text-muted-foreground"></lucide-icon>
         <h3 class="font-display font-semibold text-foreground text-sm">Rendimiento por tipo de descuento</h3>
       </div>
       <canvas baseChart [data]="tipoDescuentoChart" [options]="doughnutOpts" type="doughnut"></canvas>
-      <!-- Tabla de apoyo -->
       <div class="mt-4 space-y-2">
         @for (t of data()!.por_tipo_descuento; track t.tipo_descuento) {
           <div class="flex items-center justify-between text-xs text-muted-foreground">
@@ -67,7 +62,6 @@
 
   </div>
 
-  <!-- Análisis Cruzado -->
   <div class="rounded-xl border border-border bg-card p-6 shadow-card">
     <div class="flex items-center gap-2 mb-1">
       <lucide-icon name="layers" class="w-4 h-4 text-muted-foreground"></lucide-icon>
@@ -75,7 +69,6 @@
     </div>
     <p class="text-xs text-muted-foreground mb-5">Filtra por perfil de usuario para ver qué comercios canjearon más</p>
 
-    <!-- Selectores -->
     <div class="grid sm:grid-cols-3 gap-3 mb-6">
       <div>
         <label class="text-xs text-muted-foreground mb-1 block">Nacionalidad</label>
@@ -112,7 +105,6 @@
       </div>
     </div>
 
-    <!-- Barras resultado -->
     @if (cruzadoArray.length === 0) {
       <p class="text-sm text-muted-foreground text-center py-8">Sin datos para esta combinación</p>
     } @else {

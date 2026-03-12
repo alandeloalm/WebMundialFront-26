@@ -20,7 +20,6 @@ export class TabCampanas {
   loading = signal(true);
   error   = signal(false);
 
-  // Filtros del análisis cruzado
   filtroCruzNac   = signal<string>('todos');
   filtroCruzGen   = signal<string>('todos');
   filtroCruzEdad  = signal<string>('todos');
@@ -37,7 +36,6 @@ export class TabCampanas {
     });
   }
 
-  // ── Opciones únicas para los selectores del cruzado ──────────────────────
   get nacionalidades(): string[] {
     return ['todos', ...new Set(this.data()?.cruzado.map(r => r.nacionalidad) ?? [])];
   }
@@ -50,7 +48,6 @@ export class TabCampanas {
     return ['todos', ...unicos.sort((a, b) => orden.indexOf(a) - orden.indexOf(b))];
   }
 
-  // ── Dataset cruzado filtrado ──────────────────────────────────────────────
   cruzadoFiltrado = computed(() => {
     const raw = this.data()?.cruzado ?? [];
     const nac  = this.filtroCruzNac();
@@ -79,7 +76,6 @@ export class TabCampanas {
     return Math.max(...this.cruzadoArray.map(r => r.canjes), 1);
   }
 
-  // ── Chart: Tasa de conversión por campaña (Bar horizontal) ───────────────
   get conversionChart(): ChartData<'bar'> {
     const d = this.data();
     if (!d) return { labels: [], datasets: [] };
@@ -106,7 +102,6 @@ export class TabCampanas {
     }
   };
 
-  // ── Chart: Tipo de descuento (Doughnut) ───────────────────────────────────
   get tipoDescuentoChart(): ChartData<'doughnut'> {
     const d = this.data();
     if (!d) return { labels: [], datasets: [] };

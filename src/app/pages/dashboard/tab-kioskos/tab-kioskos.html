@@ -11,7 +11,6 @@
 }
 @else if (data()) {
 
-  <!-- KPI globales -->
   <div class="grid sm:grid-cols-4 gap-4 mb-6">
 
     <div class="rounded-xl border border-border bg-card p-5 shadow-card">
@@ -40,7 +39,6 @@
 
   </div>
 
-  <!-- Barra flujo global -->
   <div class="rounded-xl border border-border bg-card p-5 shadow-card mb-6">
     <p class="text-sm font-medium text-foreground mb-3">Flujo completo vs sin sesión</p>
     <div class="h-3 w-full rounded-full bg-slate-100 overflow-hidden flex">
@@ -63,10 +61,8 @@
     </div>
   </div>
 
-  <!-- Sesiones por kiosco (chart) + QR scans -->
   <div class="grid lg:grid-cols-2 gap-6 mb-6">
 
-    <!-- Chart sesiones -->
     <div class="rounded-xl border border-border bg-card p-6 shadow-card">
       <div class="flex items-center gap-2 mb-4">
         <lucide-icon name="monitor" class="w-4 h-4 text-muted-foreground"></lucide-icon>
@@ -75,7 +71,6 @@
       <canvas baseChart [data]="sesionesChart" [options]="sesionesOpts" type="bar"></canvas>
     </div>
 
-    <!-- QR Scans ranking -->
     <div class="rounded-xl border border-border bg-card p-6 shadow-card">
       <div class="flex items-center gap-2 mb-5">
         <lucide-icon name="qr-code" class="w-4 h-4 text-muted-foreground"></lucide-icon>
@@ -108,7 +103,6 @@
 
   </div>
 
-  <!-- Tabla detalle por kiosco -->
   <div class="rounded-xl border border-border bg-card p-6 shadow-card overflow-x-auto">
     <div class="flex items-center gap-2 mb-5">
       <lucide-icon name="table" class="w-4 h-4 text-muted-foreground"></lucide-icon>

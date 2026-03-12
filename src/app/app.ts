@@ -8,7 +8,7 @@ import { Chatbot } from './features/chatbot/chatbot';
 @Component({
   selector: 'app-root',
   standalone: true,
-  imports: [RouterOutlet, Navbar, NgxSonnerToaster, Chatbot],
+  imports: [RouterOutlet, Navbar, NgxSonnerToaster, Chatbot, Footer],
   templateUrl: './app.html',
   styleUrl: './app.css'
 })

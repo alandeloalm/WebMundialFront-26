@@ -54,8 +54,8 @@
                      class="input-shadcn" placeholder="Nombre completo">
             </div>
 
-            <app-pais-selector #paisSelector 
-              (countrySelected)="formData.nationality = $event" 
+            <app-pais-selector #paisSelector
+              (countrySelected)="formData.nationality = $event"
               (opened)="generoSelector.closeDropdown()" />
 
             <div class="relative">
@@ -67,8 +67,8 @@
             </div>
 
             <div class="grid grid-cols-2 gap-3">
-              <app-genero-selector #generoSelector 
-                  (generoSelected)="formData.gender = $event" 
+              <app-genero-selector #generoSelector
+                  (generoSelected)="formData.gender = $event"
                   (opened)="paisSelector.onClickOutside()" />
               <div class="relative">
                 <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
@@ -121,6 +121,28 @@
           {{ isRegister() ? 'Inicia sesión' : 'Regístrate' }}
         </button>
       </p>
+
+      <!-- Separador -->
+      <div class="relative flex items-center gap-4 my-6">
+        <div class="flex-grow border-t border-slate-200"></div>
+        <span class="text-[10px] uppercase tracking-[0.2em] text-slate-300 font-bold">o explora sin cuenta</span>
+        <div class="flex-grow border-t border-slate-200"></div>
+      </div>
+
+      <!-- Botón ver mapa -->
+      <a routerLink="/mapa"
+         class="group w-full flex items-center justify-between px-5 h-14 rounded-2xl border border-slate-200 bg-gradient-to-r from-slate-50 to-white hover:from-orange-50 hover:to-white hover:border-orange-200 transition-all duration-300 shadow-sm hover:shadow-md cursor-pointer">
+        <div class="flex items-center gap-3">
+          <div class="w-8 h-8 rounded-xl bg-orange-100 group-hover:bg-orange-200 flex items-center justify-center transition-colors">
+            <lucide-icon name="map-pin" class="w-4 h-4 text-[#f35b33]"></lucide-icon>
+          </div>
+          <div class="text-left">
+            <p class="text-sm font-bold text-slate-700 leading-tight">Explorar el mapa</p>
+            <p class="text-[11px] text-slate-400 leading-tight">Descubre las sedes de Monterrey</p>
+          </div>
+        </div>
+        <lucide-icon name="arrow-right" class="w-4 h-4 text-slate-300 group-hover:text-[#f35b33] group-hover:translate-x-1 transition-all duration-200"></lucide-icon>
+      </a>
 
     </div>
   </div>

@@ -1,64 +1,84 @@
-@if (auth.isLoggedIn() && auth.perfilCompleto()) {
-  <header class="sticky top-0 left-0 right-0 z-[100] glass border-b border-border transition-all duration-300">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-      <div class="flex items-center justify-between h-16">
-        
-        <div class="flex-1 flex justify-start">
-          <a routerLink="/" class="flex items-center gap-2 group relative z-[110]">
-            <div class="w-8 h-8 rounded-lg gradient-coral flex items-center justify-center transition-transform group-hover:scale-110">
-              <span class="text-secondary-foreground font-display font-bold text-sm">W</span>
-            </div>
-            <span class="font-display font-bold text-foreground text-lg tracking-tight">Woohoo!</span>
+@if (mostrarNavbar()) {
+
+<header class="sticky top-0 left-0 right-0 z-[100] glass border-b border-border transition-all duration-300">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div class="flex items-center justify-between h-16">
+
+      <div class="flex-1 flex justify-start">
+        <a routerLink="/" class="flex items-center gap-2 group relative z-[110]">
+          <div class="w-8 h-8 rounded-lg gradient-coral flex items-center justify-center transition-transform group-hover:scale-110">
+            <span class="text-secondary-foreground font-display font-bold text-sm">W</span>
+          </div>
+          <span class="font-display font-bold text-foreground text-lg tracking-tight">Woohoo!</span>
+        </a>
+      </div>
+
+      <nav class="hidden md:flex items-center gap-1 relative h-10 px-1 bg-muted/20 rounded-xl">
+        @for (item of navItems(); track item.path) {
+          <a [routerLink]="item.path" routerLinkActive="is-active" #rla="routerLinkActive"
+             class="nav-link relative px-4 py-2 rounded-lg text-sm font-medium transition-all duration-300 z-10">
+            @if (rla.isActive) {
+              <div class="active-pill absolute inset-0 bg-primary rounded-lg -z-[1]"></div>
+            }
+            <span class="flex items-center gap-2 transition-colors duration-200"
+                  [class.text-primary-foreground]="rla.isActive"
+                  [class.text-muted-foreground]="!rla.isActive">
+              <lucide-icon [name]="item.icon" class="w-4 h-4"></lucide-icon>
+              {{ item.label }}
+            </span>
           </a>
-        </div>
+        }
+      </nav>
 
-        <nav class="hidden md:flex items-center gap-1 relative h-10 px-1 bg-muted/20 rounded-xl">
-          @for (item of navItems(); track item.path) {
-            <a [routerLink]="item.path" routerLinkActive="is-active" #rla="routerLinkActive"
-               class="nav-link relative px-4 py-2 rounded-lg text-sm font-medium transition-all duration-300 z-10">
-              @if (rla.isActive) {
-                <div class="active-pill absolute inset-0 bg-primary rounded-lg -z-[1]"></div>
-              } 
-              <span class="flex items-center gap-2 transition-colors duration-200" 
-                    [class.text-primary-foreground]="rla.isActive"
-                    [class.text-muted-foreground]="!rla.isActive">
-                <lucide-icon [name]="item.icon" class="w-4 h-4"></lucide-icon>
-                {{ item.label }}
-              </span>
-            </a>
-          }
-        </nav>
-
-        <div class="flex-1 flex items-center justify-end gap-2 relative z-[110]">
+      <div class="flex-1 flex items-center justify-end gap-2 relative z-[110]">
+        @if (auth.isLoggedIn()) {
           <button (click)="logout()" class="hidden md:flex p-2 text-muted-foreground hover:text-foreground">
             <lucide-icon name="log-out" class="w-4 h-4"></lucide-icon>
           </button>
-          <button (click)="toggleMobileMenu()" class="md:hidden p-2 text-muted-foreground">
-            <lucide-icon [name]="mobileOpen() ? 'x' : 'menu'" class="w-5 h-5"></lucide-icon>
-          </button>
-        </div>
-
-      </div>
-    </div>
-  </header>
-
-  @if (mobileOpen()) {
-    <div animate.enter="nav-enter" animate.leave="nav-leave"
-         class="fixed inset-x-0 top-16 z-[90] bg-white border-b border-border p-4 md:hidden shadow-2xl">
-      <nav class="flex flex-col gap-1">
-        @for (item of navItems(); track item.path) {
-          <a [routerLink]="item.path" routerLinkActive="gradient-hero text-primary-foreground shadow-inner"
-             (click)="closeMobileMenu()"
-             class="flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-medium transition-colors text-muted-foreground">
-            <lucide-icon [name]="item.icon" class="w-4 h-4"></lucide-icon>
-            {{ item.label }}
+        } @else {
+          <a routerLink="/login"
+             class="hidden md:flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-semibold bg-primary text-primary-foreground hover:bg-primary/90 transition-all shadow-sm">
+            <lucide-icon name="log-in" class="w-4 h-4"></lucide-icon>
+            Iniciar sesión
           </a>
         }
-        <button (click)="logout()" class="flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-medium text-secondary mt-2 border-t border-border pt-4">
-            <lucide-icon name="log-out" class="w-4 h-4"></lucide-icon>
-            Cerrar Sesión
+        <button (click)="toggleMobileMenu()" class="md:hidden p-2 text-muted-foreground">
+          <lucide-icon [name]="mobileOpen() ? 'x' : 'menu'" class="w-5 h-5"></lucide-icon>
         </button>
-      </nav>
+      </div>
+
     </div>
-  }
+  </div>
+</header>
+
+@if (mobileOpen()) {
+  <div class="fixed inset-x-0 top-16 z-[90] bg-white border-b border-border p-4 md:hidden shadow-2xl">
+    <nav class="flex flex-col gap-1">
+      @for (item of navItems(); track item.path) {
+        <a [routerLink]="item.path" routerLinkActive="gradient-hero text-primary-foreground shadow-inner"
+           (click)="closeMobileMenu()"
+           class="flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-medium transition-colors text-muted-foreground">
+          <lucide-icon [name]="item.icon" class="w-4 h-4"></lucide-icon>
+          {{ item.label }}
+        </a>
+      }
+      <div class="border-t border-border mt-2 pt-2">
+        @if (auth.isLoggedIn()) {
+          <button (click)="logout(); closeMobileMenu()"
+                  class="w-full flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-medium text-secondary">
+            <lucide-icon name="log-out" class="w-4 h-4"></lucide-icon>
+            Cerrar sesión
+          </button>
+        } @else {
+          <a routerLink="/login" (click)="closeMobileMenu()"
+             class="flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-semibold bg-primary text-primary-foreground">
+            <lucide-icon name="log-in" class="w-4 h-4"></lucide-icon>
+            Iniciar sesión
+          </a>
+        }
+      </div>
+    </nav>
+  </div>
+}
+
 }

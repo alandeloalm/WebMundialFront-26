@@ -1,6 +1,5 @@
 <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8 animate-in fade-in duration-700">
 
-  <!-- Header -->
   <div class="flex items-center justify-between mb-8">
     <div>
       <h1 class="text-3xl font-display font-bold text-foreground mb-2">Dashboard</h1>
@@ -12,10 +11,8 @@
     </div>
   </div>
 
-  <!-- Tabs + Filtro -->
   <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6">
 
-    <!-- Tabs -->
     <div class="flex gap-1 p-1 rounded-xl bg-muted/40 border border-border w-fit">
       @for (tab of tabs; track tab.id) {
         <button
@@ -29,7 +26,6 @@
       }
     </div>
 
-    <!-- Filtro -->
     <div class="flex gap-1 p-1 rounded-xl bg-muted/40 border border-border w-fit">
       @for (f of filtros; track f.id) {
         <button
@@ -44,7 +40,6 @@
 
   </div>
 
-  <!-- Tab Content -->
   <div class="animate-in fade-in duration-300">
     @switch (activeTab()) {
       @case ('usuarios')  { <app-tab-usuarios  [filtro]="filtro()" /> }
