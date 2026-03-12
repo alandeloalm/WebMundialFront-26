@@ -13,7 +13,7 @@ import {
   Eye, EyeOff, Loader, Store, Plus, Pencil, Trash2, LayoutGrid,
   ImagePlus, Monitor, UserX, ChartColumnBig, ChartColumn, Ticket,
   TrendingUp, ChartPie, Layers, Percent, Award, MousePointerClick,
-  CircleCheckBig, CircleX, Table, LogIn, ArrowRight
+  CircleCheckBig, CircleX, Table, LogIn, ArrowRight, Film
 } from 'lucide-angular';
 import { provideCharts, withDefaultRegisterables } from 'ng2-charts';
 
@@ -32,7 +32,8 @@ export const appConfig: ApplicationConfig = {
         CircleAlert, LoaderCircle, Eye, EyeOff, Loader, Store, Plus,
         Pencil, Trash2, LayoutGrid, ImagePlus, Monitor, UserX, ChartColumnBig,
         ChartColumn, Ticket, TrendingUp, ChartPie, Layers, Percent, Award,
-        MousePointerClick, CircleCheckBig, CircleX, Table, LogIn, ArrowRight
+        MousePointerClick, CircleCheckBig, CircleX, Table, LogIn, ArrowRight,
+        Film
       })
     )
   ]

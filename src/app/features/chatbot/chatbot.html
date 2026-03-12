@@ -27,14 +27,15 @@
   [class]="abierto()
     ? 'opacity-100 translate-y-0 scale-100 pointer-events-auto'
     : 'opacity-0 translate-y-4 scale-95 pointer-events-none'"
-  style="bottom:100px; right:16px; width:min(375px, calc(100vw - 32px)); max-height:min(620px, calc(100dvh - 110px));"
+  style="bottom:100px; right:16px; width:min(375px, calc(100vw - 32px)); max-height:min(580px, calc(100svh - 110px));"
 >
 
+  <!-- HEADER -->
   <div class="gradient-hero flex items-center gap-3 px-4 py-3 flex-shrink-0 border-b-2 border-secondary">
     <div class="relative flex-shrink-0">
       <div class="w-11 h-11 rounded-full bg-white/10 border-2 border-white/20 flex items-center justify-center text-xl overflow-hidden">
-        @if (avatarActual()?.imagen) {
-          <img [src]="avatarActual()!.imagen" [alt]="avatarActual()!.nombre" class="w-full h-full object-cover" />
+        @if (avatarImagen(avatarActual()?.nombre); as src) {
+          <img [src]="src" [alt]="avatarActual()!.nombre" class="w-full h-full object-cover" />
         } @else {
           <span>{{ avatarActual()?.emoji || '⚽' }}</span>
         }
@@ -60,6 +61,7 @@
     </button>
   </div>
 
+  <!-- MENSAJES -->
   <div
     #messagesEl
     class="flex-1 overflow-y-auto p-3 flex flex-col gap-4 bg-background"
@@ -69,9 +71,11 @@
 
       @if (msg.role === 'bot') {
         <div class="flex items-end gap-2">
+
+          <!-- Avatar del mensaje -->
           <div class="w-8 h-8 rounded-full bg-primary border-2 border-border flex items-center justify-center text-sm flex-shrink-0 overflow-hidden">
-            @if (avatarImagen(msg.avatarInfo?.nombre)) {
-              <img [src]="avatarImagen(msg.avatarInfo?.nombre)" .../>
+            @if (avatarImagen(msg.avatarInfo?.nombre); as src) {
+              <img [src]="src" [alt]="msg.avatarInfo?.nombre" class="w-full h-full object-cover" />
             } @else {
               <span>{{ msg.avatarInfo?.emoji || '⚽' }}</span>
             }
@@ -161,8 +165,9 @@
     }
   </div>
 
+  <!-- SUGERENCIAS -->
   @if (mostrarSugerencias()) {
-    <div class="px-3 pt-2 pb-1 flex flex-wrap gap-1.5 bg-background border-t border-border">
+    <div class="px-3 pt-2 pb-1 flex flex-wrap gap-1.5 bg-background border-t border-border flex-shrink-0">
       @for (s of sugerencias; track s) {
         <button
           (click)="enviarSugerencia(s)"
@@ -172,6 +177,7 @@
     </div>
   }
 
+  <!-- INPUT -->
   <div class="flex items-end gap-2 px-3 py-2.5 bg-white border-t border-border flex-shrink-0">
     <textarea
       #inputEl

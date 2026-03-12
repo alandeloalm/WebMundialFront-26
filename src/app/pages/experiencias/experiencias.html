@@ -57,11 +57,19 @@
           (click)="abrirVideo(video)"
           class="rounded-xl border border-border bg-card shadow-card overflow-hidden group cursor-pointer animate-fade-in">
           <div class="aspect-video bg-muted relative flex items-center justify-center overflow-hidden">
-            @if (video.video_url) {
-              <video [src]="video.video_url" class="absolute inset-0 w-full h-full object-cover" preload="metadata"></video>
+            @if (cloudinaryThumbnail(video.video_url)) {
+              <img
+                [src]="cloudinaryThumbnail(video.video_url)"
+                class="absolute inset-0 w-full h-full object-cover"
+                alt="Vista previa"
+              />
+            } @else {
+              <div class="absolute inset-0 bg-slate-700 flex items-center justify-center">
+                <lucide-icon name="film" class="w-10 h-10 text-white/20"></lucide-icon>
+              </div>
             }
-            <div class="gradient-hero absolute inset-0 opacity-60"></div>
-            <div class="relative z-10 w-14 h-14 rounded-full bg-secondary/90 flex items-center justify-center group-hover:scale-110 transition-transform">
+            <div class="gradient-hero absolute inset-0 opacity-50"></div>
+            <div class="relative z-10 w-14 h-14 rounded-full bg-secondary/90 flex items-center justify-center group-hover:scale-110 transition-transform shadow-lg">
               <lucide-icon name="play" class="w-6 h-6 text-secondary-foreground"></lucide-icon>
             </div>
           </div>
@@ -106,6 +114,7 @@
         [src]="videoSeleccionado.video_url"
         controls
         autoplay
+        playsinline
         class="w-full aspect-video">
       </video>
       <div class="p-4">

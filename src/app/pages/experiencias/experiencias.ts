@@ -78,6 +78,13 @@ export class Experiencias implements OnInit {
     });
   }
 
+  cloudinaryThumbnail(videoUrl: string): string {
+    if (!videoUrl || !videoUrl.includes('cloudinary.com')) return '';
+    return videoUrl
+      .replace('/video/upload/', '/video/upload/so_1,q_auto,f_jpg/')
+      .replace(/\.(mp4|webm|mov|avi)$/i, '.jpg');
+  }
+
   abrirVideo(video: VideoExperience): void {
     this.videoSeleccionado = video;
   }

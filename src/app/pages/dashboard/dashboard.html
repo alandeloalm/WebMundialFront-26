@@ -11,31 +11,35 @@
     </div>
   </div>
 
-  <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6">
+  <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mb-6">
 
-    <div class="flex gap-1 p-1 rounded-xl bg-muted/40 border border-border w-fit">
-      @for (tab of tabs; track tab.id) {
-        <button
-          (click)="setTab(tab.id)"
-          [class]="activeTab() === tab.id
-            ? 'flex items-center gap-2 px-4 py-2 rounded-lg bg-card shadow-sm text-foreground font-medium text-sm transition-all duration-200'
-            : 'flex items-center gap-2 px-4 py-2 rounded-lg text-muted-foreground hover:text-foreground text-sm transition-all duration-200'">
-          <lucide-icon [name]="tab.icon" class="w-4 h-4"></lucide-icon>
-          {{ tab.label }}
-        </button>
-      }
+    <div class="overflow-x-auto pb-1">
+      <div class="flex gap-1 p-1 rounded-xl bg-muted/40 border border-border w-fit min-w-max">
+        @for (tab of tabs; track tab.id) {
+          <button
+            (click)="setTab(tab.id)"
+            [class]="activeTab() === tab.id
+              ? 'flex items-center gap-2 px-3 py-2 rounded-lg bg-card shadow-sm text-foreground font-medium text-sm transition-all duration-200'
+              : 'flex items-center gap-2 px-3 py-2 rounded-lg text-muted-foreground hover:text-foreground text-sm transition-all duration-200'">
+            <lucide-icon [name]="tab.icon" class="w-4 h-4"></lucide-icon>
+            {{ tab.label }}
+          </button>
+        }
+      </div>
     </div>
 
-    <div class="flex gap-1 p-1 rounded-xl bg-muted/40 border border-border w-fit">
-      @for (f of filtros; track f.id) {
-        <button
-          (click)="setFiltro(f.id)"
-          [class]="filtro() === f.id
-            ? 'px-4 py-2 rounded-lg bg-card shadow-sm text-foreground font-medium text-sm transition-all duration-200'
-            : 'px-4 py-2 rounded-lg text-muted-foreground hover:text-foreground text-sm transition-all duration-200'">
-          {{ f.label }}
-        </button>
-      }
+    <div class="overflow-x-auto pb-1">
+      <div class="flex gap-1 p-1 rounded-xl bg-muted/40 border border-border w-fit min-w-max">
+        @for (f of filtros; track f.id) {
+          <button
+            (click)="setFiltro(f.id)"
+            [class]="filtro() === f.id
+              ? 'px-4 py-2 rounded-lg bg-card shadow-sm text-foreground font-medium text-sm transition-all duration-200'
+              : 'px-4 py-2 rounded-lg text-muted-foreground hover:text-foreground text-sm transition-all duration-200'">
+            {{ f.label }}
+          </button>
+        }
+      </div>
     </div>
 
   </div>
